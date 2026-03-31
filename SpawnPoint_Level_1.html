@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LVL 1 - Functions + Prop vs Non-Prop</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Arial Black', Arial, sans-serif;
+      background: linear-gradient(135deg, #1E2761 0%, #0a1128 100%);
+      color: #FFFFFF;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .container {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      text-align: center;
+      background: rgba(244, 162, 97, 0.1);
+      padding: 15px;
+      border-bottom: 2px solid #F4A261;
+    }
+    .header h1 {
+      color: #F4A261;
+      font-size: 22px;
+      text-transform: uppercase;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    .header-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .mode-tabs {
+      display: flex;
+      gap: 10px;
+    }
+    .tab-btn {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: 2px solid #028090;
+      padding: 8px 25px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Arial Black', Arial, sans-serif;
+    }
+    .tab-btn:hover:not(:disabled) {
+      background: rgba(2, 128, 144, 0.2);
+    }
+    .tab-btn.active {
+      background: #028090;
+      box-shadow: 0 4px 15px rgba(2, 128, 144, 0.4);
+    }
+    .tab-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .tab-btn.completed::before {
+      content: "✓ ";
+      color: #06A77D;
+      font-size: 18px;
+      margin-right: 5px;
+    }
+    .tab-btn:disabled::after {
+      content: " 🔒";
+      font-size: 14px;
+    }
+    .main-content {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 450px 1fr;
+      overflow: hidden;
+    }
+    .left-panel {
+      background: rgba(0, 0, 0, 0.3);
+      overflow-y: auto;
+      padding: 20px;
+      border-right: 2px solid #028090;
+    }
+    .right-panel {
+      background: white;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #calculator {
+      width: 100%;
+      height: 100%;
+      max-height: calc(100vh - 150px);
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid #028090;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+    .card h3 {
+      color: #F4A261;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+    .card p, .card li, .card ol {
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #FFFFFF;
+    }
+    .card ol {
+      margin-left: 20px;
+    }
+    .equation-display {
+      background: rgba(2, 128, 144, 0.3);
+      border: 2px solid #028090;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 20px;
+      color: #F4A261;
+      margin: 10px 0;
+      font-family: 'Courier New', monospace;
+      text-align: center;
+    }
+    .step-box {
+      background: rgba(6, 167, 125, 0.15);
+      border: 2px solid #666;
+      border-radius: 8px;
+      padding: 12px;
+      margin: 8px 0;
+    }
+    .step-box.active {
+      background: rgba(6, 167, 125, 0.3);
+      border-color: #F4A261;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(244, 162, 97, 0.4); }
+      50% { box-shadow: 0 0 0 8px rgba(244, 162, 97, 0); }
+    }
+    .step-box h4 {
+      color: #F4A261;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+    .step-box.completed {
+      background: rgba(6, 167, 125, 0.2);
+      border-color: #06A77D;
+      opacity: 0.6;
+    }
+    .step-box.completed h4::before {
+      content: "✓ ";
+      color: #06A77D;
+    }
+    .btn {
+      background: #028090;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Arial Black', Arial, sans-serif;
+      text-transform: uppercase;
+      width: 100%;
+      margin-top: 6px;
+    }
+    .btn:hover:not(:disabled) {
+      background: #06A77D;
+      transform: translateY(-2px);
+    }
+    .btn:disabled {
+      background: #666;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .answer-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .answer-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid #028090;
+      color: white;
+      padding: 12px;
+      border-radius: 5px;
+      font-size: 14px;
+      font-family: 'Courier New', monospace;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .answer-btn:hover:not(:disabled) {
+      background: rgba(2, 128, 144, 0.3);
+      transform: scale(1.05);
+    }
+    .answer-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .answer-btn.correct {
+      background: #06A77D;
+      border-color: #06A77D;
+      animation: correctFlash 0.5s;
+    }
+    .answer-btn.incorrect {
+      background: #E76F51;
+      border-color: #E76F51;
+      animation: shake 0.5s;
+    }
+    @keyframes correctFlash {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); box-shadow: 0 0 20px rgba(6, 167, 125, 0.8); }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+    .feedback-box {
+      background: rgba(6, 167, 125, 0.2);
+      border: 2px solid #06A77D;
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 15px;
+      display: none;
+    }
+    .feedback-box.show {
+      display: block;
+      animation: slideIn 0.5s;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .feedback-box h4 {
+      color: #F4A261;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+    .feedback-box p {
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .mode-section {
+      display: none;
+    }
+    .mode-section.active {
+      display: block;
+    }
+  
+    /* Back to Dashboard Button */
+    .back-to-dashboard {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      background: #F4A261;
+      color: #1E2761;
+      padding: 12px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: bold;
+      font-family: 'Arial Black', Arial, sans-serif;
+      box-shadow: 0 4px 15px rgba(244, 162, 97, 0.4);
+      transition: all 0.3s;
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .back-to-dashboard:hover {
+      background: #06A77D;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(6, 167, 125, 0.5);
+    }
+    .back-to-dashboard:active {
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <a href="STAAR_SpawnPoints_Dashboard.html" class="back-to-dashboard">
+    <span>←</span>
+    <span>Dashboard</span>
+  </a>
+  
+
+  <div class="container">
+    <div class="header">
+      <h1>🎯 Spawn Point<br>Level Up Your Tech Stats</h1>
+      <div class="header-controls">
+        <div class="timer" style="background: #06A77D; color: white; padding: 8px 20px; border-radius: 5px; font-size: 18px; font-family: 'Courier New', monospace; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">⏰ NO TIME LIMIT</div>
+        <div class="mode-tabs">
+          <button id="guidedTab" class="tab-btn active" onclick="switchMode('guided')">GUIDED</button>
+          <button id="independentTab" class="tab-btn" onclick="switchMode('independent')" disabled>INDEPENDENT</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div class="left-panel">
+        <!-- GUIDED MODE -->
+        <div id="guided-content" class="mode-section active">
+          <div class="card">
+            <h3>📝 THE CHALLENGE</h3>
+            <p>Use Desmos to find which point does <strong>NOT</strong> lie on the line:</p>
+            <div class="equation-display">y = 2x + 1</div>
+          </div>
+
+          <div class="card">
+            <h3>⚙️ FOLLOW THESE STEPS</h3>
+            
+            <div class="step-box active" id="step1">
+              <h4>Step 1: Enter the Equation</h4>
+              <p>Type: y = 2x + 1</p>
+              <button class="btn" onclick="completeStep(1)">✓ Entered</button>
+            </div>
+
+            <div class="step-box" id="step2">
+              <h4>Step 2: Open the Table</h4>
+              <p>Click the settings icon (⚙️) → select "Table"</p>
+              <button class="btn" onclick="completeStep(2)" disabled>✓ Table Open</button>
+            </div>
+
+            <div class="step-box" id="step3">
+              <h4>Step 3: Enter and Label Points</h4>
+              <p>Enter each point on a separate line in Desmos, then click the checkbox "Label" to see which points do NOT fall on the line:</p>
+              <ul style="margin-left: 20px; font-size: 12px;">
+                <li>(1, 3)</li>
+                <li>(2, 5)</li>
+                <li>(0, 1)</li>
+                <li>(3, -4)</li>
+              </ul>
+              <button class="btn" onclick="completeStep(3)" disabled>✓ Points Labeled</button>
+            </div>
+
+            <div class="step-box" id="step4">
+              <h4>Step 4: Observe the Graph</h4>
+              <p>With labels turned on, look at the graph to see which point is NOT on the line</p>
+              <button class="btn" onclick="completeStep(4)" disabled>✓ Ready to Answer</button>
+            </div>
+
+            <div class="step-box" id="step5">
+              <h4>Step 5: Find the Answer</h4>
+              <p><strong>Which point is NOT on the line?</strong></p>
+              <div class="answer-options">
+                <button class="answer-btn" onclick="checkGuidedAnswer('A')" disabled id="guidedA">A: (1, 3)</button>
+                <button class="answer-btn" onclick="checkGuidedAnswer('B')" disabled id="guidedB">B: (2, 5)</button>
+                <button class="answer-btn" onclick="checkGuidedAnswer('C')" disabled id="guidedC">C: (0, 1)</button>
+                <button class="answer-btn" onclick="checkGuidedAnswer('D')" disabled id="guidedD">D: (3, -4)</button>
+              </div>
+              <div class="feedback-box" id="guided-feedback">
+                <h4>✓ CORRECT!</h4>
+                <p>Point D does NOT lie on the line.</p>
+                <p style="margin-top: 10px; color: #F4A261; font-weight: bold;">Now switch to INDEPENDENT mode! ⚡</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- INDEPENDENT MODE -->
+        <div id="independent-content" class="mode-section">
+          <div class="card">
+            <h3>📋 INDEPENDENT PRACTICE</h3>
+            <p style="font-size: 12px; margin-bottom: 8px;">Use the same process. Which point does NOT lie on the line?</p>
+            <div class="equation-display">y = 3x - 2</div>
+          </div>
+
+          <div class="card">
+            <h3>🎯 YOUR TURN</h3>
+            <ol style="font-size: 12px;">
+              <li>Enter the equation</li>
+              <li>Open table (settings icon → table)</li>
+              <li>Plot all points</li>
+              <li><strong>Label them A, B, C, D</strong> (click circle → label)</li>
+              <li>Find which is NOT on the line</li>
+            </ol>
+
+            <button class="btn" onclick="unlockIndependentAnswers()" style="margin-top: 15px;">✓ I've Labeled All Points</button>
+
+            <div class="answer-options" style="margin-top: 15px;">
+              <button class="answer-btn" onclick="checkIndependentAnswer('A')" id="indA" disabled>A: (1, 1)</button>
+              <button class="answer-btn" onclick="checkIndependentAnswer('B')" id="indB" disabled>B: (2, 4)</button>
+              <button class="answer-btn" onclick="checkIndependentAnswer('C')" id="indC" disabled>C: (0, -2)</button>
+              <button class="answer-btn" onclick="checkIndependentAnswer('D')" id="indD" disabled>D: (-1, -6)</button>
+            </div>
+
+            <div class="feedback-box" id="independent-feedback">
+              <h4>⚡ TECH STATS LEVELED UP!</h4>
+              <p><strong>Correct Answer: D (-1, -6)</strong></p>
+              <p style="margin-top: 10px; font-size: 12px;">When x = -1: y = 3(-1) - 2 = -5 (not -6)</p>
+              <p style="margin-top: 10px; color: #F4A261;">Screenshot your work now!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-panel">
+        <iframe id="calculator" src="https://www.desmos.com/testing/texas/graphing" style="width: 100%; height: 100%; border: none;"></iframe>
+      </div>
+    </div>
+  </div>
+
+  
+  <script>
+    let calculator = null;
+    let currentMode = 'guided';
+    let currentStep = 1;
+
+    // Initialize
+    setTimeout(function() {
+      initDesmos();
+    }, 500);
+
+    function initDesmos() {
+      try {
+        const elt = document.getElementById('calculator');
+        calculator = Desmos.GraphingCalculator(elt, {
+          expressions: true,
+          settingsMenu: true,
+          zoomButtons: true,
+          expressionsTopbar: true
+        });
+      } catch (e) {
+        console.error('Error:', e);
+      }
+    }
+
+    function switchMode(mode) {
+      // Don't allow switching to Independent if not completed Guided
+      if (mode === 'independent' && document.getElementById('independentTab').disabled) {
+        return;
+      }
+      
+      currentMode = mode;
+      
+      // Update tabs
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(mode + 'Tab').classList.add('active');
+      
+      // Update content
+      document.querySelectorAll('.mode-section').forEach(section => section.classList.remove('active'));
+      document.getElementById(mode + '-content').classList.add('active');
+      
+      // Clear calculator
+      if (calculator) {
+        calculator.setBlank();
+      }
+    }
+
+    function completeStep(stepNum) {
+      if (stepNum !== currentStep) return;
+      
+      const stepBox = document.getElementById('step' + stepNum);
+      stepBox.classList.remove('active');
+      stepBox.classList.add('completed');
+      
+      currentStep++;
+      if (currentStep <= 5) {
+        const nextStep = document.getElementById('step' + currentStep);
+        if (nextStep) {
+          nextStep.classList.add('active');
+          const nextButton = nextStep.querySelector('.btn');
+          if (nextButton) {
+            nextButton.disabled = false;
+          }
+        }
+      }
+      
+      // Unlock answer buttons after step 4 (labeling)
+      if (stepNum === 4) {
+        document.querySelectorAll('#guided-content .answer-btn').forEach(btn => {
+          btn.disabled = false;
+        });
+      }
+    }
+
+    function checkGuidedAnswer(choice) {
+      const buttons = document.querySelectorAll('#guided-content .answer-btn');
+      buttons.forEach(btn => btn.disabled = true);
+      
+      if (choice === 'D') {
+        event.target.classList.add('correct');
+        document.getElementById('guided-feedback').classList.add('show');
+        
+        // Unlock Independent mode and mark Guided as complete
+        setTimeout(() => {
+          document.getElementById('guidedTab').classList.add('completed');
+          document.getElementById('independentTab').disabled = false;
+        }, 500);
+      } else {
+        event.target.classList.add('incorrect');
+        setTimeout(() => {
+          buttons.forEach(btn => btn.disabled = false);
+          event.target.classList.remove('incorrect');
+        }, 800);
+      }
+    }
+
+    function unlockIndependentAnswers() {
+      document.querySelectorAll('#independent-content .answer-btn').forEach(btn => {
+        btn.disabled = false;
+      });
+      event.target.style.display = 'none';
+    }
+
+    function checkIndependentAnswer(choice) {
+      const buttons = document.querySelectorAll('#independent-content .answer-btn');
+      buttons.forEach(btn => btn.disabled = true);
+      
+      if (choice === 'D') {
+        event.target.classList.add('correct');
+        document.getElementById('independent-feedback').classList.add('show');
+      } else {
+        event.target.classList.add('incorrect');
+        setTimeout(() => {
+          buttons.forEach(btn => btn.disabled = false);
+          event.target.classList.remove('incorrect');
+        }, 800);
+      }
+    }
+  </script>
+</body>
+</html>

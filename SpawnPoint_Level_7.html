@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LVL 7 - Dilations — All Forms</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1E2761 0%, #0a1128 100%);
+      color: #fff;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      background: linear-gradient(90deg, #0f3460, #16213e);
+      padding: 20px;
+      border-radius: 12px;
+      border: 2px solid #F4A261;
+    }
+
+    .bee-icon {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-size: 28px;
+      color: #F4A261;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 5px;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: #4ECDC4;
+      margin-bottom: 8px;
+    }
+
+    .teks {
+      font-size: 13px;
+      color: #95E1D3;
+      font-style: italic;
+    }
+
+    .timer-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0f3460;
+      padding: 12px 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border: 2px solid #F4A261;
+    }
+
+    #timer {
+      font-size: 20px;
+      font-weight: bold;
+      background: #2A9D8F;
+      padding: 8px 16px;
+      border-radius: 6px;
+      color: #fff;
+    }
+
+    .instruction {
+      background: #264653;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      border-left: 4px solid #E76F51;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 14px;
+      background: #264653;
+      border: 2px solid transparent;
+      color: #95E1D3;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.3s;
+    }
+
+    .tab-btn:hover {
+      background: #2A9D8F;
+      transform: translateY(-2px);
+    }
+
+    .tab-btn.active {
+      background: #2A9D8F;
+      border-color: #F4A261;
+      color: #fff;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .card {
+      background: #0f3460;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      border: 2px solid #4ECDC4;
+    }
+
+    .step-box {
+      background: #1a1a2e;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      border-left: 4px solid #F4A261;
+    }
+
+    .step-box h4 {
+      color: #F4A261;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+
+    .vertex-table {
+      width: 100%;
+      margin: 15px 0;
+      border-collapse: collapse;
+    }
+
+    .vertex-table th {
+      background: #2A9D8F;
+      padding: 10px;
+      border: 2px solid #4ECDC4;
+      font-size: 14px;
+    }
+
+    .vertex-table td {
+      background: #264653;
+      padding: 12px;
+      text-align: center;
+      border: 1px solid #4ECDC4;
+      font-size: 15px;
+      font-weight: bold;
+    }
+
+    .formula-box {
+      background: #264653;
+      padding: 12px;
+      border-radius: 6px;
+      margin: 10px 0;
+      text-align: center;
+      border: 2px dashed #F4A261;
+    }
+
+    .formula {
+      font-size: 18px;
+      color: #F4A261;
+      font-weight: bold;
+      font-family: 'Courier New', monospace;
+    }
+
+    .answer-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .answer-btn {
+      padding: 14px;
+      background: #264653;
+      border: 2px solid #4ECDC4;
+      color: #fff;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.3s;
+      font-family: 'Courier New', monospace;
+    }
+
+    .answer-btn:hover:not(:disabled) {
+      background: #2A9D8F;
+      transform: scale(1.05);
+    }
+
+    .answer-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .answer-btn.correct {
+      background: #2A9D8F;
+      border-color: #95E1D3;
+      animation: pulse 0.5s;
+    }
+
+    .answer-btn.incorrect {
+      background: #C74440;
+      border-color: #E76F51;
+    }
+
+    .problem-box {
+      background: #1a1a2e;
+      padding: 18px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+
+    .problem-box h4 {
+      color: #F4A261;
+      margin-bottom: 12px;
+      font-size: 17px;
+    }
+
+    .feedback-box {
+      background: #2A9D8F;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 15px;
+      text-align: center;
+      display: none;
+    }
+
+    .feedback-box.show {
+      display: block;
+      animation: slideIn 0.5s;
+    }
+
+    .feedback-box h4 {
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .lockout {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .lockout.active {
+      display: flex;
+    }
+
+    .lockout-content {
+      background: #0f3460;
+      padding: 40px;
+      border-radius: 12px;
+      text-align: center;
+      border: 3px solid #E76F51;
+    }
+
+    .lockout-content h2 {
+      color: #E76F51;
+      font-size: 32px;
+      margin-bottom: 15px;
+    }
+
+    .lockout-content p {
+      font-size: 18px;
+      color: #95E1D3;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .highlight {
+      color: #F4A261;
+      font-weight: bold;
+    }
+
+    .note {
+      background: #264653;
+      padding: 10px;
+      border-radius: 6px;
+      margin: 10px 0;
+      font-size: 14px;
+      border-left: 3px solid #2A9D8F;
+    }
+
+    .done-btn {
+      background: #2A9D8F;
+      color: #fff;
+      border: 2px solid #4ECDC4;
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: all 0.3s;
+    }
+
+    .done-btn:hover {
+      background: #238277;
+      transform: scale(1.05);
+    }
+
+    .step-hidden {
+      display: none;
+    }
+
+    /* TWO-COLUMN LAYOUT */
+    .content-wrapper {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .left-panel {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .right-panel {
+      flex: 1;
+      position: sticky;
+      top: 20px;
+      align-self: flex-start;
+    }
+
+    .calculator-card {
+      background: #0f3460;
+      padding: 15px;
+      border-radius: 12px;
+      border: 2px solid #F4A261;
+    }
+
+    .calculator-card h3 {
+      color: #F4A261;
+      margin-bottom: 10px;
+      font-size: 18px;
+      text-align: center;
+    }
+
+    .calculator-hint {
+      background: #264653;
+      padding: 10px;
+      border-radius: 6px;
+      margin-top: 10px;
+      font-size: 13px;
+    }
+
+    @media (max-width: 1200px) {
+      .content-wrapper {
+        flex-direction: column;
+      }
+      .right-panel {
+        width: 100%;
+        position: relative;
+        top: 0;
+      }
+    }
+  
+    /* Back to Dashboard Button */
+    .back-to-dashboard {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      background: #F4A261;
+      color: #1E2761;
+      padding: 12px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: bold;
+      font-family: 'Arial Black', Arial, sans-serif;
+      box-shadow: 0 4px 15px rgba(244, 162, 97, 0.4);
+      transition: all 0.3s;
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .back-to-dashboard:hover {
+      background: #06A77D;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(6, 167, 125, 0.5);
+    }
+    .back-to-dashboard:active {
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <a href="STAAR_SpawnPoints_Dashboard.html" class="back-to-dashboard">
+    <span>←</span>
+    <span>Dashboard</span>
+  </a>
+  
+
+  <div class="header">
+    <div class="bee-icon"></div>
+    <h1>Spawn Point - Level 7 (Practice)</h1>
+    <div class="subtitle">Zone 2: Build Mode • Untimed</div>
+    <div class="teks">TEKS 8.3(C) - Dilations with Scale Factors</div>
+  </div>
+
+
+  <div style="text-align: center; background: #06A77D; color: white; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 18px; font-weight: bold; font-family: 'Courier New', monospace; border: 2px solid #F4A261;">
+    ⏰ NO TIME LIMIT - PRACTICE MODE
+  </div>
+
+  <div class="instruction">
+    <strong>🎮 MISSION:</strong> Master finding dilation rules from coordinate pairs. Complete GUIDED mode, then level up to INDEPENDENT mode!
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('guided')">🎯 GUIDED MODE</button>
+    <button class="tab-btn" onclick="switchTab('independent')" id="indBtn" disabled>🚀 INDEPENDENT MODE</button>
+  </div>
+
+  <!-- GUIDED MODE -->
+  <div id="guided" class="tab-content active">
+    <div class="content-wrapper">
+      <div class="left-panel">
+        <div class="card">
+          <h3 style="color: #4ECDC4; margin-bottom: 15px;">📍 FINDING THE SCALE FACTOR</h3>
+          
+          <div class="step-box" id="step1">
+            <h4>STEP 1: Read the vertices table</h4>
+            <p>Triangle ABC is dilated with the origin as the center of dilation.</p>
+            
+            <table class="vertex-table">
+              <thead>
+                <tr>
+                  <th>Vertices of △ABC</th>
+                  <th>Vertices of △A'B'C'</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>(2, 3)</td>
+                  <td>(6, 9)</td>
+                </tr>
+                <tr>
+                  <td>(4, 1)</td>
+                  <td>(12, 3)</td>
+                </tr>
+                <tr>
+                  <td>(2, -1)</td>
+                  <td>(6, -3)</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="note">
+              <strong>📝 YOUR TASK:</strong> Compare the original vertices (left column) with the dilated vertices (right column). Notice how the numbers changed!
+            </div>
+
+            <button class="done-btn" onclick="showStep2()">✓ Done - Next Step</button>
+          </div>
+
+          <div class="step-box step-hidden" id="step2">
+            <h4>STEP 2: Use Desmos to find the scale factor</h4>
+            <p>Let's use the first vertex: <span class="highlight">(2, 3) → (6, 9)</span></p>
+            
+            <div class="note">
+              <strong>🔍 KEY STRATEGY:</strong> Divide the NEW coordinate by the ORIGINAL coordinate.
+            </div>
+
+            <div class="note" style="border-left-color: #F4A261;">
+              <strong>📊 Use the DESMOS calculator on the right →</strong>
+              <ol style="margin-left: 20px; margin-top: 8px;">
+                <li>Type: <code style="background: #1a1a2e; padding: 2px 6px; border-radius: 3px;">6/2</code> to find x scale factor</li>
+                <li>Type: <code style="background: #1a1a2e; padding: 2px 6px; border-radius: 3px;">9/3</code> to find y scale factor</li>
+                <li>Both should equal <span class="highlight">3</span></li>
+              </ol>
+            </div>
+
+            <div class="formula-box">
+              <div class="formula">Scale factor = new ÷ original = 3</div>
+            </div>
+
+            <button class="done-btn" onclick="showStep3()">✓ Done - Next Step</button>
+          </div>
+
+          <div class="step-box step-hidden" id="step3">
+            <h4>STEP 3: Write the dilation rule</h4>
+            <p>The scale factor is <span class="highlight">3</span>, so multiply both x and y by 3.</p>
+            
+            <div class="formula-box">
+              <div class="formula">(x, y) → (3x, 3y)</div>
+            </div>
+
+            <button class="done-btn" onclick="showProblem()">✓ Done - Try the Problem!</button>
+          </div>
+
+          <div class="problem-box step-hidden" id="guided-problem">
+            <h4>✅ YOUR TURN - Which rule represents this dilation?</h4>
+            <div class="answer-grid">
+              <button class="answer-btn" onclick="checkGuided('A')" id="gA">(x, y) → (1/3 x, 1/3 y)</button>
+              <button class="answer-btn" onclick="checkGuided('B')" id="gB">(x, y) → (2x, 2y)</button>
+              <button class="answer-btn" onclick="checkGuided('C')" id="gC">(x, y) → (3x, 3y)</button>
+              <button class="answer-btn" onclick="checkGuided('D')" id="gD">(x, y) → (6x, 6y)</button>
+            </div>
+            <div class="feedback-box" id="guided-feedback">
+              <h4>🎯 CORRECT!</h4>
+              <p><strong>You unlocked INDEPENDENT MODE!</strong></p>
+              <p style="margin-top: 8px; font-size: 14px;">The triangle grew 3 times larger, so we multiply by 3.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-panel">
+        <div class="calculator-card">
+          <h3>📊 TEXAS STAAR DESMOS</h3>
+          <iframe src="https://www.desmos.com/testing/texas/graphing" width="100%" height="600" style="border: 2px solid #2A9D8F; border-radius: 6px;" frameborder="0"></iframe>
+          <div class="calculator-hint">
+            <strong>💡 TIP:</strong> Type calculations directly (like 6/2 or 9/3) to find the scale factor!
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INDEPENDENT MODE -->
+  <div id="independent" class="tab-content">
+    <div class="content-wrapper">
+      <div class="left-panel">
+        <div class="card">
+          <h3 style="color: #F4A261; margin-bottom: 15px;">🚀 INDEPENDENT PRACTICE</h3>
+          
+          <div class="problem-box" id="prob1">
+            <h4>PROBLEM 1:</h4>
+            <p style="margin-bottom: 12px;">Rectangle DEFG is dilated with the origin as the center of dilation.</p>
+            
+            <table class="vertex-table">
+              <thead>
+                <tr>
+                  <th>Vertices of DEFG</th>
+                  <th>Vertices of D'E'F'G'</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>(3, 6)</td>
+                  <td>(1.5, 3)</td>
+                </tr>
+                <tr>
+                  <td>(9, 6)</td>
+                  <td>(4.5, 3)</td>
+                </tr>
+                <tr>
+                  <td>(9, 2)</td>
+                  <td>(4.5, 1)</td>
+                </tr>
+                <tr>
+                  <td>(3, 2)</td>
+                  <td>(1.5, 1)</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="note" style="border-left-color: #F4A261; margin-top: 12px;">
+              <strong>📊 Use Desmos →</strong> Try typing <code style="background: #1a1a2e; padding: 2px 4px;">1.5/3</code>
+            </div>
+
+            <p style="margin: 12px 0;"><strong>Which rule represents this dilation?</strong></p>
+            
+            <div class="answer-grid">
+              <button class="answer-btn" onclick="checkProb1('A')" id="p1a">(x, y) → (2x, 2y)</button>
+              <button class="answer-btn" onclick="checkProb1('B')" id="p1b">(x, y) → (1/2 x, 1/2 y)</button>
+              <button class="answer-btn" onclick="checkProb1('C')" id="p1c">(x, y) → (3x, 3y)</button>
+              <button class="answer-btn" onclick="checkProb1('D')" id="p1d">(x, y) → (1/3 x, 1/3 y)</button>
+            </div>
+          </div>
+
+          <div class="problem-box" id="prob2" style="display: none;">
+            <h4>PROBLEM 2:</h4>
+            <p style="margin-bottom: 12px;">Triangle JKL is dilated with the origin as the center of dilation.</p>
+            
+            <table class="vertex-table">
+              <thead>
+                <tr>
+                  <th>Vertices of △JKL</th>
+                  <th>Vertices of △J'K'L'</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>(-2, 4)</td>
+                  <td>(-5, 10)</td>
+                </tr>
+                <tr>
+                  <td>(4, 2)</td>
+                  <td>(10, 5)</td>
+                </tr>
+                <tr>
+                  <td>(-2, -2)</td>
+                  <td>(-5, -5)</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="note" style="border-left-color: #F4A261; margin-top: 12px;">
+              <strong>📊 Use Desmos →</strong> Try <code style="background: #1a1a2e; padding: 2px 4px;">-5/-2</code> or <code style="background: #1a1a2e; padding: 2px 4px;">10/4</code>
+            </div>
+
+            <p style="margin: 12px 0;"><strong>Which rule represents this dilation?</strong></p>
+            
+            <div class="answer-grid">
+              <button class="answer-btn" onclick="checkProb2('A')" id="p2a">(x, y) → (2x, 2y)</button>
+              <button class="answer-btn" onclick="checkProb2('B')" id="p2b">(x, y) → (2.5x, 2.5y)</button>
+              <button class="answer-btn" onclick="checkProb2('C')" id="p2c">(x, y) → (5x, 5y)</button>
+              <button class="answer-btn" onclick="checkProb2('D')" id="p2d">(x, y) → (1/5 x, 1/5 y)</button>
+            </div>
+          </div>
+
+          <div class="problem-box" id="prob3" style="display: none;">
+            <h4>PROBLEM 3:</h4>
+            <p style="margin-bottom: 12px;">Square PQRS is dilated with the origin as the center of dilation.</p>
+            
+            <table class="vertex-table">
+              <thead>
+                <tr>
+                  <th>Vertices of PQRS</th>
+                  <th>Vertices of P'Q'R'S'</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>(1, 2)</td>
+                  <td>(4, 8)</td>
+                </tr>
+                <tr>
+                  <td>(3, 2)</td>
+                  <td>(12, 8)</td>
+                </tr>
+                <tr>
+                  <td>(3, 4)</td>
+                  <td>(12, 16)</td>
+                </tr>
+                <tr>
+                  <td>(1, 4)</td>
+                  <td>(4, 16)</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="note" style="border-left-color: #F4A261; margin-top: 12px;">
+              <strong>📊 Use Desmos →</strong> Try <code style="background: #1a1a2e; padding: 2px 4px;">4/1</code> or <code style="background: #1a1a2e; padding: 2px 4px;">8/2</code>
+            </div>
+
+            <p style="margin: 12px 0;"><strong>Which rule represents this dilation?</strong></p>
+            
+            <div class="answer-grid">
+              <button class="answer-btn" onclick="checkProb3('A')" id="p3a">(x, y) → (3x, 3y)</button>
+              <button class="answer-btn" onclick="checkProb3('B')" id="p3b">(x, y) → (4x, 4y)</button>
+              <button class="answer-btn" onclick="checkProb3('C')" id="p3c">(x, y) → (1/4 x, 1/4 y)</button>
+              <button class="answer-btn" onclick="checkProb3('D')" id="p3d">(x, y) → (8x, 8y)</button>
+            </div>
+          </div>
+
+          <div class="problem-box" id="prob4" style="display: none;">
+            <h4>PROBLEM 4:</h4>
+            <p style="margin-bottom: 12px;">Trapezoid WXYZ is dilated with the origin as the center of dilation.</p>
+            
+            <table class="vertex-table">
+              <thead>
+                <tr>
+                  <th>Vertices of WXYZ</th>
+                  <th>Vertices of W'X'Y'Z'</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>(-8, 4)</td>
+                  <td>(-2, 1)</td>
+                </tr>
+                <tr>
+                  <td>(4, 8)</td>
+                  <td>(1, 2)</td>
+                </tr>
+                <tr>
+                  <td>(8, -4)</td>
+                  <td>(2, -1)</td>
+                </tr>
+                <tr>
+                  <td>(-4, -8)</td>
+                  <td>(-1, -2)</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="note" style="border-left-color: #F4A261; margin-top: 12px;">
+              <strong>📊 Use Desmos →</strong> Try <code style="background: #1a1a2e; padding: 2px 4px;">-2/-8</code> or <code style="background: #1a1a2e; padding: 2px 4px;">1/4</code>
+            </div>
+
+            <p style="margin: 12px 0;"><strong>Which rule represents this dilation?</strong></p>
+            
+            <div class="answer-grid">
+              <button class="answer-btn" onclick="checkProb4('A')" id="p4a">(x, y) → (4x, 4y)</button>
+              <button class="answer-btn" onclick="checkProb4('B')" id="p4b">(x, y) → (1/2 x, 1/2 y)</button>
+              <button class="answer-btn" onclick="checkProb4('C')" id="p4c">(x, y) → (0.25x, 0.25y)</button>
+              <button class="answer-btn" onclick="checkProb4('D')" id="p4d">(x, y) → (8x, 8y)</button>
+            </div>
+
+            <div class="feedback-box" id="independent-feedback">
+              <h4>⚡ SPAWN POINT COMPLETE!</h4>
+              <p><strong>You mastered dilations!</strong></p>
+              <p style="margin-top: 8px; font-size: 14px;">Ready for the main lesson!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-panel">
+        <div class="calculator-card">
+          <h3>📊 TEXAS STAAR DESMOS</h3>
+          <iframe src="https://www.desmos.com/testing/texas/graphing" width="100%" height="600" style="border: 2px solid #2A9D8F; border-radius: 6px;" frameborder="0"></iframe>
+          <div class="calculator-hint">
+            <strong>💡 TIP:</strong> Type your division calculations here (like 1.5/3) to find the scale factor!
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+      });
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+
+      document.getElementById(tab).classList.add('active');
+      if (tab === 'guided') {
+        document.querySelector('.tab-btn:first-child').classList.add('active');
+      } else {
+        document.getElementById('indBtn').classList.add('active');
+      }
+    }
+
+    function checkGuided(choice) {
+      const buttons = ['gA', 'gB', 'gC', 'gD'];
+      buttons.forEach(id => {
+        document.getElementById(id).disabled = true;
+      });
+
+      if (choice === 'C') {
+        document.getElementById('gC').classList.add('correct');
+        document.getElementById('guided-feedback').classList.add('show');
+        
+        setTimeout(() => {
+          document.getElementById('indBtn').disabled = false;
+          document.getElementById('indBtn').style.animation = 'pulse 1s infinite';
+        }, 1000);
+      } else {
+        document.getElementById('g' + choice).classList.add('incorrect');
+        document.getElementById('gC').classList.add('correct');
+        
+        setTimeout(() => {
+          buttons.forEach(id => {
+            document.getElementById(id).classList.remove('incorrect', 'correct');
+            document.getElementById(id).disabled = false;
+          });
+        }, 1500);
+      }
+    }
+
+    function checkProb1(choice) {
+      const buttons = document.querySelectorAll('#prob1 .answer-btn');
+      buttons.forEach(btn => btn.disabled = true);
+
+      if (choice === 'B') {
+        document.getElementById('p1b').classList.add('correct');
+        setTimeout(() => {
+          document.getElementById('prob1').style.display = 'none';
+          document.getElementById('prob2').style.display = 'block';
+        }, 1000);
+      } else {
+        document.getElementById('p1' + choice.toLowerCase()).classList.add('incorrect');
+        document.getElementById('p1b').classList.add('correct');
+        
+        setTimeout(() => {
+          buttons.forEach(btn => {
+            btn.classList.remove('incorrect', 'correct');
+            btn.disabled = false;
+          });
+        }, 1500);
+      }
+    }
+
+    function checkProb2(choice) {
+      const buttons = document.querySelectorAll('#prob2 .answer-btn');
+      buttons.forEach(btn => btn.disabled = true);
+
+      if (choice === 'B') {
+        document.getElementById('p2b').classList.add('correct');
+        setTimeout(() => {
+          document.getElementById('prob2').style.display = 'none';
+          document.getElementById('prob3').style.display = 'block';
+        }, 1000);
+      } else {
+        document.getElementById('p2' + choice.toLowerCase()).classList.add('incorrect');
+        document.getElementById('p2b').classList.add('correct');
+        
+        setTimeout(() => {
+          buttons.forEach(btn => {
+            btn.classList.remove('incorrect', 'correct');
+            btn.disabled = false;
+          });
+        }, 1500);
+      }
+    }
+
+    function checkProb3(choice) {
+      const buttons = document.querySelectorAll('#prob3 .answer-btn');
+      buttons.forEach(btn => btn.disabled = true);
+
+      if (choice === 'B') {
+        document.getElementById('p3b').classList.add('correct');
+        setTimeout(() => {
+          document.getElementById('prob3').style.display = 'none';
+          document.getElementById('prob4').style.display = 'block';
+        }, 1000);
+      } else {
+        document.getElementById('p3' + choice.toLowerCase()).classList.add('incorrect');
+        document.getElementById('p3b').classList.add('correct');
+        
+        setTimeout(() => {
+          buttons.forEach(btn => {
+            btn.classList.remove('incorrect', 'correct');
+            btn.disabled = false;
+          });
+        }, 1500);
+      }
+    }
+
+    function checkProb4(choice) {
+      const buttons = document.querySelectorAll('#prob4 .answer-btn');
+      buttons.forEach(btn => btn.disabled = true);
+
+      if (choice === 'C') {
+        document.getElementById('p4c').classList.add('correct');
+        document.getElementById('independent-feedback').classList.add('show');
+      } else {
+        document.getElementById('p4' + choice.toLowerCase()).classList.add('incorrect');
+        document.getElementById('p4c').classList.add('correct');
+        
+        setTimeout(() => {
+          buttons.forEach(btn => {
+            btn.classList.remove('incorrect', 'correct');
+            btn.disabled = false;
+          });
+        }, 1500);
+      }
+    }
+
+    function showStep2() {
+      document.getElementById('step2').classList.remove('step-hidden');
+      document.getElementById('step2').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function showStep3() {
+      document.getElementById('step3').classList.remove('step-hidden');
+      document.getElementById('step3').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function showProblem() {
+      document.getElementById('guided-problem').classList.remove('step-hidden');
+      document.getElementById('guided-problem').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  </script>
+</body>
+</html>

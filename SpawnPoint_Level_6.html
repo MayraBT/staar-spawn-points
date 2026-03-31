@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LVL 6 - Volume + Surface Area</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Arial Black', Arial, sans-serif;
+      background: linear-gradient(135deg, #1E2761 0%, #0a1128 100%);
+      color: #FFFFFF;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .container {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      text-align: center;
+      background: rgba(244, 162, 97, 0.1);
+      padding: 15px;
+      border-bottom: 2px solid #F4A261;
+    }
+    .header h1 {
+      color: #F4A261;
+      font-size: 22px;
+      text-transform: uppercase;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    .header-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .practice-badge {
+      background: #06A77D;
+      color: white;
+      padding: 8px 20px;
+      border-radius: 5px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .mode-tabs {
+      display: flex;
+      gap: 10px;
+    }
+    .tab-btn {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: 2px solid #028090;
+      padding: 8px 25px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Arial Black', Arial, sans-serif;
+    }
+    .tab-btn:hover:not(:disabled) {
+      background: rgba(2, 128, 144, 0.2);
+    }
+    .tab-btn.active {
+      background: #028090;
+      box-shadow: 0 4px 15px rgba(2, 128, 144, 0.4);
+    }
+    .tab-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .tab-btn.completed::before {
+      content: "✓ ";
+      color: #06A77D;
+      font-size: 18px;
+      margin-right: 5px;
+    }
+    .tab-btn:disabled::after {
+      content: " 🔒";
+      font-size: 14px;
+    }
+    .main-content {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 450px 1fr;
+      overflow: hidden;
+    }
+    .left-panel {
+      background: rgba(0, 0, 0, 0.3);
+      overflow-y: auto;
+      padding: 20px;
+      border-right: 2px solid #028090;
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+    }
+    .right-panel {
+      background: white;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid #028090;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+    .card h3 {
+      color: #F4A261;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+    .card p {
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #FFFFFF;
+    }
+    .problem-display {
+      background: rgba(244, 162, 97, 0.2);
+      border: 2px solid #F4A261;
+      padding: 12px;
+      border-radius: 8px;
+      margin: 10px 0;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .problem-display strong {
+      color: #F4A261;
+    }
+    .hint-box {
+      background: rgba(6, 167, 125, 0.15);
+      border: 2px dashed #06A77D;
+      border-radius: 8px;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 13px;
+    }
+    .hint-box strong {
+      color: #F4A261;
+    }
+    .fraction {
+      display: inline-block;
+      vertical-align: middle;
+      text-align: center;
+    }
+    .fraction-num {
+      display: block;
+      border-bottom: 1px solid #F4A261;
+      padding-bottom: 2px;
+    }
+    .fraction-den {
+      display: block;
+      padding-top: 2px;
+    }
+    .step-box {
+      background: rgba(6, 167, 125, 0.15);
+      border: 2px solid #666;
+      border-radius: 8px;
+      padding: 14px;
+      margin: 10px 0;
+    }
+    .step-box.active {
+      background: rgba(6, 167, 125, 0.3);
+      border-color: #F4A261;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(244, 162, 97, 0.4); }
+      50% { box-shadow: 0 0 0 8px rgba(244, 162, 97, 0); }
+    }
+    .step-box h4 {
+      color: #F4A261;
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+    .step-box p {
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .step-box code {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+      color: #F4A261;
+    }
+    .step-box.completed {
+      background: rgba(6, 167, 125, 0.2);
+      border-color: #06A77D;
+      opacity: 0.6;
+    }
+    .step-box.completed h4::before {
+      content: "✓ ";
+      color: #06A77D;
+    }
+    .btn {
+      background: #028090;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 5px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Arial Black', Arial, sans-serif;
+      text-transform: uppercase;
+      width: 100%;
+      margin-top: 8px;
+    }
+    .btn:hover:not(:disabled) {
+      background: #06A77D;
+      transform: translateY(-2px);
+    }
+    .btn:disabled {
+      background: #666;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .answer-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .answer-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid #028090;
+      color: white;
+      padding: 14px;
+      border-radius: 5px;
+      font-size: 17px;
+      font-family: 'Courier New', monospace;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: bold;
+    }
+    .answer-btn:hover:not(:disabled) {
+      background: rgba(2, 128, 144, 0.3);
+      transform: scale(1.05);
+    }
+    .answer-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .answer-btn.correct {
+      background: #06A77D;
+      border-color: #06A77D;
+      animation: correctFlash 0.5s;
+    }
+    .answer-btn.incorrect {
+      background: #E76F51;
+      border-color: #E76F51;
+      animation: shake 0.5s;
+    }
+    @keyframes correctFlash {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+    .problem-box {
+      background: rgba(244, 162, 97, 0.15);
+      border: 2px solid #F4A261;
+      border-radius: 8px;
+      padding: 12px;
+      margin: 12px 0;
+    }
+    .problem-box h4 {
+      color: #F4A261;
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+    .feedback-box {
+      background: rgba(6, 167, 125, 0.2);
+      border: 2px solid #06A77D;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 15px;
+      text-align: center;
+      display: none;
+    }
+    .feedback-box.show {
+      display: block;
+    }
+    .feedback-box h4 {
+      color: #F4A261;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    .mode-section {
+      display: none;
+    }
+    .mode-section.active {
+      display: block;
+    }
+    @media (max-width: 1200px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+      .left-panel {
+        max-height: 40vh;
+      }
+    }
+  
+    /* Back to Dashboard Button */
+    .back-to-dashboard {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      background: #F4A261;
+      color: #1E2761;
+      padding: 12px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: bold;
+      font-family: 'Arial Black', Arial, sans-serif;
+      box-shadow: 0 4px 15px rgba(244, 162, 97, 0.4);
+      transition: all 0.3s;
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .back-to-dashboard:hover {
+      background: #06A77D;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(6, 167, 125, 0.5);
+    }
+    .back-to-dashboard:active {
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <a href="STAAR_SpawnPoints_Dashboard.html" class="back-to-dashboard">
+    <span>←</span>
+    <span>Dashboard</span>
+  </a>
+  
+
+  <div class="container">
+    <div class="header">
+      <h1>LEVEL 6 SPAWN POINTS - 3D GEOMETRY (UNTIMED PRACTICE)</h1>
+      <div class="header-controls">
+        <div class="timer" style="background: #06A77D; color: white; padding: 8px 20px; border-radius: 5px; font-size: 18px; font-family: 'Courier New', monospace; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">⏰ NO TIME LIMIT</div>
+        <div class="practice-badge">⏰ NO TIME LIMIT</div>
+        <div class="mode-tabs">
+          <button class="tab-btn active" onclick="switchMode('guided')" id="guidedTab">🎓 GUIDED</button>
+          <button class="tab-btn" onclick="switchMode('independent')" id="independentTab" disabled>⚡ INDEPENDENT</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div class="left-panel">
+        <!-- GUIDED MODE -->
+        <div id="guided-content" class="mode-section active">
+          <div class="card">
+            <h3>📋 GUIDED PRACTICE (TEKS 8.7A/8.7B)</h3>
+            <p style="font-size: 13px;">Volume and Surface Area using Desmos</p>
+            
+            <div class="hint-box">
+              💡 <strong>TIP: Type "/" to create fractions in Desmos!</strong><br>
+              • Reference your STAAR materials for all formulas!
+            </div>
+          </div>
+
+          <!-- GUIDED PROBLEM 1: VOLUME -->
+          <div class="card">
+            <h3 style="color: #F4A261;">🎯 GUIDED PROBLEM 1: VOLUME (8.7A)</h3>
+            
+            <div class="problem-display">
+              The volume of a cone is approximately <strong>1,647 cubic centimeters</strong>. The height of the cone is <strong>13 centimeters</strong>. Which measurement is closest to the <strong>diameter</strong> of the base of the cone in centimeters?
+            </div>
+
+            <div class="hint-box">
+              <strong>VOLUME OF CONE:</strong> V = <span class="fraction"><span class="fraction-num">1</span><span class="fraction-den">3</span></span>Bh where B = πr²
+            </div>
+
+            <div class="step-box active" id="step1a">
+              <h4>STEP 1: Type Volume Formula</h4>
+              <p>In line 1, type: <code>V ~ 1/3Bh</code></p>
+              <p style="font-size: 13px; margin-top: 4px;">(Type "/" creates vertical fraction)</p>
+              <button class="btn" onclick="completeStep('1a')">Done ✓</button>
+            </div>
+
+            <div class="step-box" id="step2a">
+              <h4>STEP 2: Define Base Area</h4>
+              <p>In line 2, type: <code>B = πr²</code></p>
+              <button class="btn" onclick="completeStep('2a')" disabled>Done ✓</button>
+            </div>
+
+            <div class="step-box" id="step3a">
+              <h4>STEP 3: Assign Height</h4>
+              <p>In line 3, type: <code>h = 13</code></p>
+              <button class="btn" onclick="completeStep('3a')" disabled>Done ✓</button>
+            </div>
+
+            <div class="step-box" id="step4a">
+              <h4>STEP 4: Assign Volume</h4>
+              <p>In line 4, type: <code>V = 1647</code></p>
+              <button class="btn" onclick="completeStep('4a')" disabled>Done ✓</button>
+            </div>
+
+            <div class="step-box" id="step5a">
+              <h4>STEP 5: Read Radius</h4>
+              <p>Look at line 1 - Desmos calculated <strong>r = ?</strong></p>
+              <div class="answer-grid">
+                <button class="answer-btn" onclick="checkAnswer('5a', '11')" disabled>r ≈ 11</button>
+                <button class="answer-btn" onclick="checkAnswer('5a', '22')" disabled>r ≈ 22</button>
+              </div>
+            </div>
+
+            <div class="step-box" id="step6a">
+              <h4>STEP 6: Calculate Diameter</h4>
+              <p>Question asks for <strong>diameter</strong> (not radius)!</p>
+              <p style="margin-top: 4px;">In line 5, type: <code>r · 2</code></p>
+              <div class="answer-grid">
+                <button class="answer-btn" onclick="checkAnswer('6a', '22')" disabled>22 cm</button>
+                <button class="answer-btn" onclick="checkAnswer('6a', '44')" disabled>44 cm</button>
+              </div>
+              <div class="feedback-box" id="feedback-6a">
+                <h4>✓ PROBLEM 1 COMPLETE!</h4>
+                <p><strong>Diameter = 22 cm</strong></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- GUIDED PROBLEM 2: SURFACE AREA -->
+          <div class="card">
+            <h3 style="color: #F4A261;">🎯 GUIDED PROBLEM 2: SURFACE AREA (8.7B)</h3>
+            
+            <div class="problem-display">
+              The lateral surface area of a triangular prism is <strong>252 square feet</strong>. The side lengths of the triangular base are <strong>6 feet, 7 feet, and 8 feet</strong>. What is the height of the prism in feet?
+            </div>
+
+            <div class="hint-box">
+              <strong>LATERAL SURFACE AREA:</strong> S = Ph where P = perimeter
+            </div>
+
+            <div class="step-box" id="step1b">
+              <h4>STEP 1: Clear Calculator First!</h4>
+              <p>Click ⋮ menu (top right) → Clear All</p>
+              <button class="btn" onclick="completeStep('1b')" disabled>Done ✓</button>
+            </div>
+
+            <div class="step-box" id="step2b">
+              <h4>STEP 2: Type Surface Area Formula</h4>
+              <p>In line 1, type: <code>S ~ Ph</code></p>
+              <button class="btn" onclick="completeStep('2b')" disabled>Done ✓</button>
+            </div>
+
+            <div class="step-box" id="step3b">
+              <h4>STEP 3: Calculate Perimeter</h4>
+              <p>In line 2, type: <code>P = 6 + 7 + 8</code></p>
+              <button class="btn" onclick="completeStep('3b')" disabled>Done ✓</button>
+            </div>
+
+            <div class="step-box" id="step4b">
+              <h4>STEP 4: Assign Surface Area</h4>
+              <p>In line 3, type: <code>S = 252</code></p>
+              <button class="btn" onclick="completeStep('4b')" disabled>Done ✓</button>
+            </div>
+
+            <div class="step-box" id="step5b">
+              <h4>STEP 5: Read Height</h4>
+              <p>Look at line 1 - Desmos calculated <strong>h = ?</strong></p>
+              <div class="answer-grid">
+                <button class="answer-btn" onclick="checkAnswer('5b', '12')" disabled>12 ft</button>
+                <button class="answer-btn" onclick="checkAnswer('5b', '21')" disabled>21 ft</button>
+              </div>
+              <div class="feedback-box" id="feedback-5b">
+                <h4>✓ BOTH PROBLEMS COMPLETE!</h4>
+                <p><strong>Height = 12 feet</strong></p>
+                <p style="margin-top: 10px; color: #F4A261; font-weight: bold;">Switch to INDEPENDENT mode! ⚡</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- INDEPENDENT MODE -->
+        <div id="independent-content" class="mode-section">
+          <div class="card">
+            <h3>📋 INDEPENDENT PRACTICE</h3>
+            <p style="font-size: 13px;">Solve 7 STAAR-style problems</p>
+            <div class="hint-box" style="margin-top: 8px;">
+              💡 <strong>IMPORTANT:</strong> Clear your Desmos calculator between problems!<br>
+              Click the ⋮ menu (top right) → Clear All
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="problem-box" id="prob1">
+              <h4>PROBLEM 1 (TEKS 8.7A) - FIND RADIUS</h4>
+              <div class="problem-display">
+                A cone has a volume of approximately <strong>523.6 cubic centimeters</strong>. The height of the cone is <strong>10 centimeters</strong>. Which measurement is closest to the radius of the base of the cone in centimeters?
+              </div>
+              <div class="answer-grid">
+                <button class="answer-btn" onclick="checkProb('1', '7')" id="p1a">7 cm</button>
+                <button class="answer-btn" onclick="checkProb('1', '10')" id="p1b">10 cm</button>
+                <button class="answer-btn" onclick="checkProb('1', '14')" id="p1c">14 cm</button>
+                <button class="answer-btn" onclick="checkProb('1', '17')" id="p1d">17 cm</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="problem-box" id="prob2">
+              <h4>PROBLEM 2 (TEKS 8.7A) - FIND RADIUS</h4>
+              <div class="problem-display">
+                A cylindrical water tank has a volume of approximately <strong>942 cubic feet</strong> and a height of <strong>12 feet</strong>. What measurement is closest to the radius of the tank in feet?
+              </div>
+              <div class="answer-grid">
+                <button class="answer-btn" onclick="checkProb('2', '5')" disabled id="p2a">5 ft</button>
+                <button class="answer-btn" onclick="checkProb('2', '8')" disabled id="p2b">8 ft</button>
+                <button class="answer-btn" onclick="checkProb('2', '10')" disabled id="p2c">10 ft</button>
+                <button class="answer-btn" onclick="checkProb('2', '25')" disabled id="p2d">25 ft</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="problem-box" id="prob3">
+              <h4>PROBLEM 3 (TEKS 8.7A) - FIND DIAMETER</h4>
+              <div class="problem-display">
+                The volume of a cone is approximately <strong>1,231 cubic inches</strong>. The cone has a height of <strong>12 inches</strong>. What measurement is closest to the diameter of the base in inches?
+              </div>
+              <div class="answer-grid">
+                <button class="answer-btn" onclick="checkProb('3', '9.5')" disabled id="p3a">9.5 in</button>
+                <button class="answer-btn" onclick="checkProb('3', '17.5')" disabled id="p3b">17.5 in</button>
+                <button class="answer-btn" onclick="checkProb('3', '19')" disabled id="p3c">19 in</button>
+                <button class="answer-btn" onclick="checkProb('3', '38')" disabled id="p3d">38 in</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="problem-box" id="prob4">
+              <h4>PROBLEM 4 (TEKS 8.7B) - FIND HEIGHT</h4>
+              <div class="problem-display">
+                A triangular prism has a lateral surface area of <strong>420 square inches</strong>. The triangular base has side lengths of <strong>9 inches, 12 inches, and 15 inches</strong>. What is the height of the prism in inches?
+              </div>
+              <div class="answer-grid">
+                <button class="answer-btn" onclick="checkProb('4', '11.7')" disabled id="p4a">11.7 in</button>
+                <button class="answer-btn" onclick="checkProb('4', '21')" disabled id="p4b">21 in</button>
+                <button class="answer-btn" onclick="checkProb('4', '28')" disabled id="p4c">28 in</button>
+                <button class="answer-btn" onclick="checkProb('4', '35')" disabled id="p4d">35 in</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="problem-box" id="prob5">
+              <h4>PROBLEM 5 (TEKS 8.7A) - FIND VOLUME</h4>
+              <div class="problem-display">
+                A cone has a radius of <strong>6 meters</strong> and a height of <strong>14 meters</strong>. Which measurement is closest to the volume of the cone in cubic meters?
+              </div>
+              <div class="answer-grid">
+                <button class="answer-btn" onclick="checkProb('5', '168')" disabled id="p5a">168 m³</button>
+                <button class="answer-btn" onclick="checkProb('5', '264')" disabled id="p5b">264 m³</button>
+                <button class="answer-btn" onclick="checkProb('5', '528')" disabled id="p5c">528 m³</button>
+                <button class="answer-btn" onclick="checkProb('5', '1,582')" disabled id="p5d">1,582 m³</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="problem-box" id="prob6">
+              <h4>PROBLEM 6 (TEKS 8.7B) - FIND LATERAL SURFACE AREA</h4>
+              <div class="problem-display">
+                A rectangular prism has a length of <strong>8 centimeters</strong>, a width of <strong>5 centimeters</strong>, and a height of <strong>12 centimeters</strong>. What is the lateral surface area of the prism in square centimeters?
+              </div>
+              <div class="answer-grid">
+                <button class="answer-btn" onclick="checkProb('6', '156')" disabled id="p6a">156 cm²</button>
+                <button class="answer-btn" onclick="checkProb('6', '236')" disabled id="p6b">236 cm²</button>
+                <button class="answer-btn" onclick="checkProb('6', '312')" disabled id="p6c">312 cm²</button>
+                <button class="answer-btn" onclick="checkProb('6', '392')" disabled id="p6d">392 cm²</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="problem-box" id="prob7">
+              <h4>PROBLEM 7 (TEKS 8.7B) - FIND TOTAL SURFACE AREA</h4>
+              <div class="problem-display">
+                A cylinder has a radius of <strong>7 inches</strong> and a height of <strong>10 inches</strong>. Which measurement is closest to the total surface area of the cylinder in square inches?
+              </div>
+              <div class="answer-grid">
+                <button class="answer-btn" onclick="checkProb('7', '440')" disabled id="p7a">440 in²</button>
+                <button class="answer-btn" onclick="checkProb('7', '527')" disabled id="p7b">527 in²</button>
+                <button class="answer-btn" onclick="checkProb('7', '748')" disabled id="p7c">748 in²</button>
+                <button class="answer-btn" onclick="checkProb('7', '1,540')" disabled id="p7d">1,540 in²</button>
+              </div>
+              <div class="feedback-box" id="independent-feedback">
+                <h4>⚡ ALL 7 COMPLETE!</h4>
+                <p><strong>You leveled up your Tech Stats!</strong></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-panel">
+        <iframe id="calculator" src="https://www.desmos.com/testing/texas/graphing" style="width: 100%; height: 100%; border: none;"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentMode = 'guided';
+    let currentStep = '1a';
+    let completedSteps = [];
+
+    // Prevent copy/paste and right-click
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+      return false;
+    });
+
+    document.addEventListener('copy', function(e) {
+      e.preventDefault();
+      return false;
+    });
+
+    document.addEventListener('cut', function(e) {
+      e.preventDefault();
+      return false;
+    });
+
+    document.addEventListener('keydown', function(e) {
+      // Prevent Ctrl+C, Ctrl+X, Ctrl+V, Cmd+C, Cmd+X, Cmd+V
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'x' || e.key === 'v')) {
+        e.preventDefault();
+        return false;
+      }
+    });
+
+    function switchMode(mode) {
+      if (mode === 'independent' && document.getElementById('independentTab').disabled) return;
+      
+      currentMode = mode;
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(mode + 'Tab').classList.add('active');
+      document.querySelectorAll('.mode-section').forEach(section => section.classList.remove('active'));
+      document.getElementById(mode + '-content').classList.add('active');
+      
+      if (mode === 'independent') {
+        const iframe = document.getElementById('calculator');
+        iframe.src = iframe.src;
+      }
+    }
+
+    function completeStep(stepId) {
+      const stepBox = document.getElementById('step' + stepId);
+      stepBox.classList.remove('active');
+      stepBox.classList.add('completed');
+      completedSteps.push(stepId);
+
+      const stepMap = {
+        '1a': '2a', '2a': '3a', '3a': '4a', '4a': '5a', '5a': '6a',
+        '1b': '2b', '2b': '3b', '3b': '4b', '4b': '5b'
+      };
+
+      const nextStepId = stepMap[stepId];
+      if (nextStepId) {
+        const nextStep = document.getElementById('step' + nextStepId);
+        if (nextStep) {
+          nextStep.classList.add('active');
+          const buttons = nextStep.querySelectorAll('.btn, .answer-btn');
+          buttons.forEach(btn => btn.disabled = false);
+        }
+      }
+    }
+
+    function checkAnswer(stepId, correctAnswer) {
+      const buttons = document.querySelectorAll(`#step${stepId} .answer-btn`);
+      buttons.forEach(btn => btn.disabled = true);
+      
+      if (event.target.textContent.includes(correctAnswer)) {
+        event.target.classList.add('correct');
+        const feedbackBox = document.getElementById('feedback-' + stepId);
+        if (feedbackBox) {
+          feedbackBox.classList.add('show');
+        }
+        setTimeout(() => {
+          completeStep(stepId);
+          // Special handling for completing problem 1 - enable problem 2
+          if (stepId === '6a') {
+            const step1b = document.getElementById('step1b');
+            if (step1b) {
+              step1b.classList.add('active');
+              const step1bButton = step1b.querySelector('.btn');
+              if (step1bButton) step1bButton.disabled = false;
+            }
+          }
+          if (stepId === '5b') {
+            document.getElementById('guidedTab').classList.add('completed');
+            document.getElementById('independentTab').disabled = false;
+          }
+        }, 500);
+      } else {
+        event.target.classList.add('incorrect');
+        setTimeout(() => {
+          buttons.forEach(btn => btn.disabled = false);
+          event.target.classList.remove('incorrect');
+        }, 800);
+      }
+    }
+
+    function checkProb(probNum, correctAnswer) {
+      const buttons = document.querySelectorAll(`#prob${probNum} .answer-btn`);
+      buttons.forEach(btn => btn.disabled = true);
+      
+      if (event.target.textContent.includes(correctAnswer)) {
+        event.target.classList.add('correct');
+        const nextProb = parseInt(probNum) + 1;
+        if (nextProb <= 7) {
+          setTimeout(() => {
+            document.querySelectorAll(`#prob${nextProb} .answer-btn`).forEach(btn => btn.disabled = false);
+          }, 500);
+        } else {
+          document.getElementById('independent-feedback').classList.add('show');
+        }
+      } else {
+        event.target.classList.add('incorrect');
+        setTimeout(() => {
+          buttons.forEach(btn => btn.disabled = false);
+          event.target.classList.remove('incorrect');
+        }, 800);
+      }
+    }
+  </script>
+</body>
+</html>
