@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zone 3 - Level 10 Spawn Points - Systems of Equations</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Arial Black', Arial, sans-serif;
+            background: linear-gradient(135deg, #1E2761 0%, #0a1128 100%);
+            color: #FFFFFF;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            text-align: center;
+            background: rgba(244, 162, 97, 0.1);
+            padding: 15px;
+            border-bottom: 2px solid #F4A261;
+        }
+        .header h1 {
+            color: #F4A261;
+            font-size: 22px;
+            text-transform: uppercase;
+            line-height: 1.2;
+            margin-bottom: 8px;
+        }
+        .header-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .mode-tabs {
+            display: flex;
+            gap: 10px;
+        }
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid #028090;
+            padding: 8px 25px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Arial Black', Arial, sans-serif;
+        }
+        .tab-btn:hover:not(:disabled) {
+            background: rgba(2, 128, 144, 0.2);
+        }
+        .tab-btn.active {
+            background: #028090;
+            box-shadow: 0 4px 15px rgba(2, 128, 144, 0.4);
+        }
+        .tab-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .tab-btn.completed::before {
+            content: "✓ ";
+            color: #06A77D;
+            font-size: 18px;
+            margin-right: 5px;
+        }
+        .tab-btn:disabled::after {
+            content: " 🔒";
+            font-size: 14px;
+        }
+        .main-content {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 450px 1fr;
+            overflow: hidden;
+        }
+        .left-panel {
+            background: rgba(0, 0, 0, 0.3);
+            overflow-y: auto;
+            padding: 20px;
+            border-right: 2px solid #028090;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        .right-panel {
+            background: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #028090;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .card h3 {
+            color: #F4A261;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .card p {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #FFFFFF;
+        }
+        .problem-display {
+            background: rgba(244, 162, 97, 0.2);
+            border: 2px solid #F4A261;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .problem-display strong {
+            color: #F4A261;
+        }
+        .hint-box {
+            background: rgba(6, 167, 125, 0.15);
+            border: 2px dashed #06A77D;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 13px;
+        }
+        .hint-box strong {
+            color: #F4A261;
+        }
+        .step-box {
+            background: rgba(6, 167, 125, 0.15);
+            border: 2px solid #666;
+            border-radius: 8px;
+            padding: 14px;
+            margin: 10px 0;
+        }
+        .step-box.active {
+            background: rgba(6, 167, 125, 0.3);
+            border-color: #F4A261;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(244, 162, 97, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(244, 162, 97, 0); }
+        }
+        .step-box h4 {
+            color: #F4A261;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        .step-box p {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .step-box code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #F4A261;
+        }
+        .step-box.completed {
+            background: rgba(6, 167, 125, 0.2);
+            border-color: #06A77D;
+            opacity: 0.6;
+        }
+        .step-box.completed h4::before {
+            content: "✓ ";
+            color: #06A77D;
+        }
+        .btn {
+            background: #028090;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Arial Black', Arial, sans-serif;
+            text-transform: uppercase;
+            width: 100%;
+            margin-top: 8px;
+        }
+        .btn:hover:not(:disabled) {
+            background: #026774;
+            transform: scale(1.02);
+        }
+        .btn:disabled {
+            background: #444;
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .answer-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .answer-btn {
+            background: rgba(2, 128, 144, 0.3);
+            color: white;
+            border: 2px solid #028090;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: Arial, sans-serif;
+        }
+        .answer-btn:hover:not(:disabled) {
+            background: rgba(2, 128, 144, 0.5);
+            transform: scale(1.05);
+        }
+        .answer-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .answer-btn.correct {
+            background: #06A77D;
+            border-color: #06A77D;
+            animation: correctPulse 0.5s ease;
+        }
+        .answer-btn.incorrect {
+            background: #E76F51;
+            border-color: #E76F51;
+            animation: shake 0.5s ease;
+        }
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        .mode-section {
+            display: none;
+        }
+        .mode-section.active {
+            display: block;
+        }
+        .feedback-box {
+            background: rgba(6, 167, 125, 0.2);
+            border: 2px solid #06A77D;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 12px;
+            display: none;
+        }
+        .feedback-box.show {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .feedback-box h4 {
+            color: #F4A261;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        .problem-box {
+            background: rgba(0, 0, 0, 0.2);
+            border: 2px solid #666;
+            border-radius: 8px;
+            padding: 12px;
+        }
+        .problem-box h4 {
+            color: #F4A261;
+            font-size: 15px;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 ZONE 3: THE RATIO REALM - LEVEL 10<br>Systems of Linear Equations</h1>
+            <div class="header-controls">
+                <div class="mode-tabs">
+                    <button class="tab-btn active" id="guidedTab" onclick="switchMode('guided')">GUIDED</button>
+                    <button class="tab-btn" id="independentTab" onclick="switchMode('independent')" disabled>INDEPENDENT</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="left-panel">
+                <!-- GUIDED MODE -->
+                <div id="guided-content" class="mode-section active">
+                    <div class="card">
+                        <h3>📍 TEKS 8.9(A) - SYSTEMS OF EQUATIONS</h3>
+                        
+                        <div class="problem-display">
+                            <p><strong>Two lines are represented by these points:</strong></p>
+                            <p style="margin-top: 8px; color: #028090;"><strong>Line 1:</strong> (0, 7) and (8, 3)</p>
+                            <p style="color: #E76F51;"><strong>Line 2:</strong> (2, 0) and (0, -5)</p>
+                            <p style="margin-top: 12px;">Which ordered pair is the solution of the system of equations?</p>
+                        </div>
+                        
+                        <div class="hint-box">
+                            💡 <strong>Note:</strong> Some problems may provide a graph with two intersecting lines instead of points. The solution (intersection) will NOT be plotted on the graph—you'll need to find it!
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>🎮 GUIDED WALKTHROUGH</h3>
+                        <p style="font-size: 13px;">Use Linear Regression to find where the lines intersect</p>
+                        
+                        <div class="step-box active" id="step1">
+                            <h4>STEP 1: Create Table for First Line</h4>
+                            <p>In Desmos, click the <strong>+ button</strong> and add a <strong>table</strong></p>
+                            <p style="margin-top: 8px;">Enter two points from the blue line:</p>
+                            <p style="margin-top: 8px; color: #F4A261;">x₁: 0, 8</p>
+                            <p style="color: #F4A261;">y₁: 7, 3</p>
+                            <div class="hint-box" style="margin-top: 8px;">
+                                💡 Use the labeled points on the graph!
+                            </div>
+                            <button class="btn" onclick="completeStep(1)">I CREATED TABLE 1 ✓</button>
+                        </div>
+
+                        <div class="step-box" id="step2">
+                            <h4>STEP 2: Add Linear Regression for First Line</h4>
+                            <p>In the <strong>blue pane on the left</strong>, click the <strong>regression button</strong></p>
+                            <p style="margin-top: 8px; font-size: 13px;">It will automatically calculate the equation!</p>
+                            <p style="margin-top: 8px; color: #F4A261;">You should see: <strong>y = -0.5x + 7</strong></p>
+                            <div class="hint-box" style="margin-top: 8px;">
+                                💡 The regression button is in the left margin of Desmos. It looks like a trend line icon.
+                            </div>
+                            <button class="btn" onclick="completeStep(2)" disabled>I SEE THE EQUATION ✓</button>
+                        </div>
+
+                        <div class="step-box" id="step3">
+                            <h4>STEP 3: Create Table for Second Line</h4>
+                            <p>Add another <strong>table</strong> for the orange/red line:</p>
+                            <p style="margin-top: 8px; color: #F4A261;">x₂: 2, 0</p>
+                            <p style="color: #F4A261;">y₂: 0, -5</p>
+                            <p style="margin-top: 8px; font-size: 13px;">Use the labeled points from the second line</p>
+                            <button class="btn" onclick="completeStep(3)" disabled>I CREATED TABLE 2 ✓</button>
+                        </div>
+
+                        <div class="step-box" id="step4">
+                            <h4>STEP 4: Add Linear Regression for Second Line</h4>
+                            <p>Click the <strong>regression button</strong> in the blue left pane again</p>
+                            <p style="margin-top: 8px; color: #F4A261;">You should see: <strong>y = 2.5x - 5</strong></p>
+                            <p style="margin-top: 8px; font-size: 13px;">Now you have both equations!</p>
+                            <button class="btn" onclick="completeStep(4)" disabled>I HAVE BOTH EQUATIONS ✓</button>
+                        </div>
+
+                        <div class="step-box" id="step5">
+                            <h4>STEP 5: Find the Intersection Point</h4>
+                            <p>Look at your graph! Where do the two lines cross?</p>
+                            <p style="margin-top: 8px; color: #F4A261;">The intersection point is the <strong>SOLUTION</strong> to the system!</p>
+                            <div class="hint-box" style="margin-top: 8px;">
+                                💡 You can click on the intersection point in Desmos to see the exact coordinates
+                            </div>
+                            <button class="btn" onclick="completeStep(5)" disabled>I FOUND THE INTERSECTION ✓</button>
+                        </div>
+
+                        <div class="step-box" id="step6">
+                            <h4>FINAL QUESTION:</h4>
+                            <p>Which ordered pair is the solution of the system of equations?</p>
+                            <div class="answer-grid">
+                                <button class="answer-btn" onclick="checkStep6('A')" disabled>A) (5, 4)</button>
+                                <button class="answer-btn" onclick="checkStep6('B')" disabled>B) (0, -5)</button>
+                                <button class="answer-btn" onclick="checkStep6('C')" disabled>C) (8, 3)</button>
+                                <button class="answer-btn" onclick="checkStep6('D')" disabled>D) (4, 5)</button>
+                            </div>
+                            <div class="feedback-box" id="guided-feedback">
+                                <h4>✓ PERFECT!</h4>
+                                <p><strong>D) (4, 5)</strong></p>
+                                <p style="font-size: 13px; margin-top: 8px;">The intersection point is where both equations are true!</p>
+                                <p style="margin-top: 10px; color: #F4A261; font-weight: bold;">Switch to INDEPENDENT mode! ⚡</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- INDEPENDENT MODE -->
+                <div id="independent-content" class="mode-section">
+                    <div class="card">
+                        <h3>📋 INDEPENDENT PRACTICE</h3>
+                        <p style="font-size: 13px;">Find the solution to each system using Linear Regression!</p>
+                        <div class="hint-box" style="margin-top: 8px;">
+                            💡 Steps: Create 2 tables → Click regression button → Find intersection
+                        </div>
+                    </div>
+
+                    <!-- PROBLEM 1 -->
+                    <div class="card">
+                        <h3>PROBLEM 1</h3>
+                        
+                        <div class="problem-display">
+                            <p><strong>Two lines are represented by these points:</strong></p>
+                            <p style="margin-top: 8px; color: #028090;"><strong>Line 1:</strong> (0, 6) and (6, 4)</p>
+                            <p style="color: #E76F51;"><strong>Line 2:</strong> (0, 2) and (4, 6)</p>
+                            <p style="margin-top: 12px;">Which ordered pair is the solution of the system of equations?</p>
+                        </div>
+
+                        <div class="problem-box" id="prob1">
+                            <div class="answer-grid">
+                                <button class="answer-btn" onclick="checkProb1('A')" id="p1a">A) (4, 2)</button>
+                                <button class="answer-btn" onclick="checkProb1('B')" id="p1b">B) (3, 5)</button>
+                                <button class="answer-btn" onclick="checkProb1('C')" id="p1c">C) (4, 6)</button>
+                                <button class="answer-btn" onclick="checkProb1('D')" id="p1d">D) (0, 2)</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PROBLEM 2 -->
+                    <div class="card">
+                        <h3>PROBLEM 2</h3>
+                        
+                        <div class="problem-display">
+                            <p><strong>Two lines are represented by these points:</strong></p>
+                            <p style="margin-top: 8px; color: #028090;"><strong>Line 1:</strong> (0, 1) and (5, 6)</p>
+                            <p style="color: #E76F51;"><strong>Line 2:</strong> (0, 7) and (4, -1)</p>
+                            <p style="margin-top: 12px;">Which ordered pair is the solution of the system of equations?</p>
+                        </div>
+
+                        <div class="problem-box" id="prob2">
+                            <div class="answer-grid">
+                                <button class="answer-btn" onclick="checkProb2('A')" disabled id="p2a">A) (1, 2)</button>
+                                <button class="answer-btn" onclick="checkProb2('B')" disabled id="p2b">B) (2, 3)</button>
+                                <button class="answer-btn" onclick="checkProb2('C')" disabled id="p2c">C) (3, 4)</button>
+                                <button class="answer-btn" onclick="checkProb2('D')" disabled id="p2d">D) (4, 5)</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PROBLEM 3 -->
+                    <div class="card">
+                        <h3>PROBLEM 3</h3>
+                        
+                        <div class="problem-display">
+                            <p><strong>Two lines are represented by these points:</strong></p>
+                            <p style="margin-top: 8px; color: #028090;"><strong>Line 1:</strong> (0, 9) and (3, 0)</p>
+                            <p style="color: #E76F51;"><strong>Line 2:</strong> (0, 3) and (6, 9)</p>
+                            <p style="margin-top: 12px;">Which ordered pair is the solution of the system of equations?</p>
+                        </div>
+
+                        <div class="problem-box" id="prob3">
+                            <div class="answer-grid">
+                                <button class="answer-btn" onclick="checkProb3('A')" disabled id="p3a">A) (1, 4)</button>
+                                <button class="answer-btn" onclick="checkProb3('B')" disabled id="p3b">B) (1.5, 4.5)</button>
+                                <button class="answer-btn" onclick="checkProb3('C')" disabled id="p3c">C) (2, 5)</button>
+                                <button class="answer-btn" onclick="checkProb3('D')" disabled id="p3d">D) (3, 6)</button>
+                            </div>
+                            <div class="feedback-box" id="independent-feedback">
+                                <h4>⚡ ALL 3 COMPLETE!</h4>
+                                <p><strong>You leveled up your Tech Stats!</strong></p>
+                                <p style="font-size: 13px; margin-top: 8px;">Systems of equations = MASTERED!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <iframe id="calculator" src="https://www.desmos.com/testing/texas/graphing" style="width: 100%; height: 100%; border: none;"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentMode = 'guided';
+        let currentStep = 1;
+
+        // Prevent copy/paste and right-click
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+
+        document.addEventListener('copy', function(e) {
+            e.preventDefault();
+            return false;
+        });
+
+        document.addEventListener('cut', function(e) {
+            e.preventDefault();
+            return false;
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'x' || e.key === 'v')) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        function switchMode(mode) {
+            if (mode === 'independent' && document.getElementById('independentTab').disabled) return;
+            
+            currentMode = mode;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(mode + 'Tab').classList.add('active');
+            document.querySelectorAll('.mode-section').forEach(section => section.classList.remove('active'));
+            document.getElementById(mode + '-content').classList.add('active');
+            
+            // Clear Desmos graph when switching to Independent
+            if (mode === 'independent') {
+                const iframe = document.getElementById('calculator');
+                iframe.src = iframe.src;
+            }
+        }
+
+        function completeStep(stepNum) {
+            if (stepNum !== currentStep) return;
+            const stepBox = document.getElementById('step' + stepNum);
+            stepBox.classList.remove('active');
+            stepBox.classList.add('completed');
+            currentStep++;
+            if (currentStep <= 6) {
+                const nextStep = document.getElementById('step' + currentStep);
+                if (nextStep) {
+                    nextStep.classList.add('active');
+                    const buttons = nextStep.querySelectorAll('.btn, .answer-btn');
+                    buttons.forEach(btn => btn.disabled = false);
+                }
+            }
+        }
+
+        function checkStep6(choice) {
+            const buttons = document.querySelectorAll('#step6 .answer-btn');
+            buttons.forEach(btn => btn.disabled = true);
+            if (choice === 'D') {  // (4, 5)
+                event.target.classList.add('correct');
+                document.getElementById('guided-feedback').classList.add('show');
+                setTimeout(() => {
+                    document.getElementById('guidedTab').classList.add('completed');
+                    document.getElementById('independentTab').disabled = false;
+                }, 500);
+            } else {
+                event.target.classList.add('incorrect');
+                setTimeout(() => {
+                    buttons.forEach(btn => btn.disabled = false);
+                    event.target.classList.remove('incorrect');
+                }, 800);
+            }
+        }
+
+        function checkProb1(choice) {
+            const buttons = document.querySelectorAll('#prob1 .answer-btn');
+            buttons.forEach(btn => btn.disabled = true);
+            // Line 1: (0,6) and (6,4) → y = -1/3 x + 6
+            // Line 2: (0,2) and (4,6) → y = x + 2
+            // Intersection: -1/3 x + 6 = x + 2 → x = 3, y = 5
+            if (choice === 'B') {  // (3, 5)
+                event.target.classList.add('correct');
+                setTimeout(() => {
+                    document.querySelectorAll('#prob2 .answer-btn').forEach(btn => btn.disabled = false);
+                }, 500);
+            } else {
+                event.target.classList.add('incorrect');
+                setTimeout(() => {
+                    buttons.forEach(btn => btn.disabled = false);
+                    event.target.classList.remove('incorrect');
+                }, 800);
+            }
+        }
+
+        function checkProb2(choice) {
+            const buttons = document.querySelectorAll('#prob2 .answer-btn');
+            buttons.forEach(btn => btn.disabled = true);
+            // Line 1: (0,1) and (5,6) → y = x + 1
+            // Line 2: (0,7) and (4,-1) → y = -2x + 7
+            // Intersection: x + 1 = -2x + 7 → x = 2, y = 3
+            if (choice === 'B') {  // (2, 3)
+                event.target.classList.add('correct');
+                setTimeout(() => {
+                    document.querySelectorAll('#prob3 .answer-btn').forEach(btn => btn.disabled = false);
+                }, 500);
+            } else {
+                event.target.classList.add('incorrect');
+                setTimeout(() => {
+                    buttons.forEach(btn => btn.disabled = false);
+                    event.target.classList.remove('incorrect');
+                }, 800);
+            }
+        }
+
+        function checkProb3(choice) {
+            const buttons = document.querySelectorAll('#prob3 .answer-btn');
+            buttons.forEach(btn => btn.disabled = true);
+            // Line 1: (0,9) and (3,0) → slope = -3, y = -3x + 9
+            // Line 2: (0,3) and (6,9) → slope = 1, y = x + 3
+            // -3x + 9 = x + 3 → 6 = 4x → x = 1.5, y = 4.5
+            if (choice === 'B') {  // (1.5, 4.5)
+                event.target.classList.add('correct');
+                document.getElementById('independent-feedback').classList.add('show');
+            } else {
+                event.target.classList.add('incorrect');
+                setTimeout(() => {
+                    buttons.forEach(btn => btn.disabled = false);
+                    event.target.classList.remove('incorrect');
+                }, 800);
+            }
+        }
+    </script>
+</body>
+</html>

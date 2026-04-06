@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zones 2+3 Raid Boss - Desmos Master Challenge</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Arial Black', Arial, sans-serif;
+            background: linear-gradient(135deg, #8B0000 0%, #2d0a0a 100%);
+            color: #FFFFFF;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            text-align: center;
+            background: rgba(139, 0, 0, 0.3);
+            padding: 20px;
+            border-bottom: 3px solid #FF6B6B;
+        }
+        .header h1 {
+            color: #FF6B6B;
+            font-size: 26px;
+            text-transform: uppercase;
+            line-height: 1.2;
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px rgba(255, 107, 107, 0.6);
+        }
+        .progress-bar {
+            background: rgba(0, 0, 0, 0.5);
+            height: 30px;
+            border-radius: 15px;
+            margin: 10px auto;
+            max-width: 600px;
+            border: 2px solid #FF6B6B;
+            overflow: hidden;
+            position: relative;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FF6B6B, #FF4444);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            z-index: 10;
+        }
+        .main-content {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 450px 1fr;
+            overflow: hidden;
+        }
+        .left-panel {
+            background: rgba(0, 0, 0, 0.4);
+            overflow-y: auto;
+            padding: 20px;
+            border-right: 3px solid #FF6B6B;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        .right-panel {
+            background: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .card {
+            background: rgba(139, 0, 0, 0.2);
+            border: 2px solid #FF6B6B;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        .card.locked {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+        .card.completed {
+            border-color: #06A77D;
+            background: rgba(6, 167, 125, 0.1);
+        }
+        .card h3 {
+            color: #FF6B6B;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .card.completed h3::before {
+            content: "✓ ";
+            color: #06A77D;
+        }
+        .card p {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #FFFFFF;
+        }
+        .teks-badge {
+            background: rgba(255, 107, 107, 0.3);
+            border: 1px solid #FF6B6B;
+            border-radius: 5px;
+            padding: 4px 10px;
+            font-size: 11px;
+            display: inline-block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .problem-display {
+            background: rgba(255, 107, 107, 0.15);
+            border: 2px solid #FF6B6B;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .problem-display strong {
+            color: #FF6B6B;
+        }
+        .answer-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .answer-btn {
+            background: rgba(139, 0, 0, 0.4);
+            color: white;
+            border: 2px solid #FF6B6B;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: Arial, sans-serif;
+        }
+        .answer-btn:hover:not(:disabled) {
+            background: rgba(139, 0, 0, 0.6);
+            transform: scale(1.05);
+        }
+        .answer-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .answer-btn.correct {
+            background: #06A77D;
+            border-color: #06A77D;
+            animation: correctPulse 0.5s ease;
+        }
+        .answer-btn.incorrect {
+            background: #E76F51;
+            border-color: #E76F51;
+            animation: shake 0.5s ease;
+        }
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        .final-feedback {
+            background: rgba(6, 167, 125, 0.2);
+            border: 3px solid #06A77D;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 15px;
+            display: none;
+            text-align: center;
+        }
+        .final-feedback.show {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .final-feedback h2 {
+            color: #06A77D;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .desmos-reminder {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px dashed #FF6B6B;
+            border-radius: 5px;
+            padding: 8px;
+            margin-top: 8px;
+            font-size: 12px;
+            color: #FFB3B3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚔️ ZONES 2+3 RAID BOSS ⚔️<br>DESMOS MASTER CHALLENGE</h1>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+                <div class="progress-text" id="progressText">0/6 Complete</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="left-panel">
+                <!-- INTRO CARD -->
+                <div class="card" style="background: rgba(255, 107, 107, 0.2);">
+                    <h3 style="font-size: 18px;">🎯 RAID BOSS CHALLENGE</h3>
+                    <p style="font-size: 13px;">Complete all 6 problems using Desmos strategies from Levels 5-10. Each problem unlocks the next!</p>
+                </div>
+
+                <!-- PROBLEM 1: PYTHAGOREAN THEOREM -->
+                <div class="card" id="card1">
+                    <div class="teks-badge">LEVEL 5 • TEKS 8.7C</div>
+                    <h3>PROBLEM 1: Pythagorean Theorem</h3>
+                    <div class="problem-display">
+                        <p>A right triangle has legs measuring <strong>9 cm</strong> and <strong>12 cm</strong>. What is the length of the hypotenuse?</p>
+                    </div>
+                    <div class="desmos-reminder">
+                        💡 Line 1: a<sup>2</sup> + b<sup>2</sup> = c<sup>2</sup> {using ~}<br>
+                        Line 2: a = 9<br>
+                        Line 3: b = 12<br>
+                        Line 4: c (to see answer)
+                    </div>
+                    <div class="answer-grid">
+                        <button class="answer-btn" onclick="checkAnswer(1, 'A')">A) 13 cm</button>
+                        <button class="answer-btn" onclick="checkAnswer(1, 'B')">B) 17 cm</button>
+                        <button class="answer-btn" onclick="checkAnswer(1, 'C')">C) 15 cm</button>
+                        <button class="answer-btn" onclick="checkAnswer(1, 'D')">D) 21 cm</button>
+                    </div>
+                </div>
+
+                <!-- PROBLEM 2: VOLUME/SURFACE AREA -->
+                <div class="card locked" id="card2">
+                    <div class="teks-badge">LEVEL 6 • TEKS 8.7A</div>
+                    <h3>PROBLEM 2: Volume of a Cylinder</h3>
+                    <div class="problem-display">
+                        <p>A cylinder has a radius of <strong>5 inches</strong> and a height of <strong>8 inches</strong>. Which measurement is closest to the volume in cubic inches?</p>
+                    </div>
+                    <div class="desmos-reminder">
+                        💡 Line 1: V ~ Bh {using ~}<br>
+                        Line 2: B = πr<sup>2</sup><br>
+                        Line 3: r = 5<br>
+                        Line 4: h = 8
+                    </div>
+                    <div class="answer-grid">
+                        <button class="answer-btn" onclick="checkAnswer(2, 'A')" disabled>A) 628 in³</button>
+                        <button class="answer-btn" onclick="checkAnswer(2, 'B')" disabled>B) 502 in³</button>
+                        <button class="answer-btn" onclick="checkAnswer(2, 'C')" disabled>C) 754 in³</button>
+                        <button class="answer-btn" onclick="checkAnswer(2, 'D')" disabled>D) 880 in³</button>
+                    </div>
+                </div>
+
+                <!-- PROBLEM 3: DILATIONS -->
+                <div class="card locked" id="card3">
+                    <div class="teks-badge">LEVEL 7 • TEKS 8.3C</div>
+                    <h3>PROBLEM 3: Dilations</h3>
+                    <div class="problem-display">
+                        <p>Point P(4, 6) is dilated from the origin. The image P' is located at (12, 18). What is the scale factor?</p>
+                    </div>
+                    <div class="desmos-reminder">
+                        💡 Use corresponding x or y values:<br>
+                        new / preimage → 12/4 or 18/6
+                    </div>
+                    <div class="answer-grid">
+                        <button class="answer-btn" onclick="checkAnswer(3, 'A')" disabled>A) 2</button>
+                        <button class="answer-btn" onclick="checkAnswer(3, 'B')" disabled>B) 4</button>
+                        <button class="answer-btn" onclick="checkAnswer(3, 'C')" disabled>C) 8</button>
+                        <button class="answer-btn" onclick="checkAnswer(3, 'D')" disabled>D) 3</button>
+                    </div>
+                </div>
+
+                <!-- PROBLEM 4: TRANSFORMATIONS -->
+                <div class="card locked" id="card4">
+                    <div class="teks-badge">LEVEL 8 • TEKS 8.10C</div>
+                    <h3>PROBLEM 4: Transformations</h3>
+                    
+                    <div style="background: white; padding: 10px; border-radius: 8px; margin: 10px 0;">
+                        <svg viewBox="0 0 500 400" style="max-width: 100%; height: auto;">
+                            <!-- Grid -->
+                            <defs>
+                                <pattern id="grid4" width="40" height="40" patternUnits="userSpaceOnUse">
+                                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#ddd" stroke-width="0.5"/>
+                                </pattern>
+                            </defs>
+                            <rect width="500" height="400" fill="url(#grid4)"/>
+                            
+                            <!-- Axes -->
+                            <line x1="0" y1="200" x2="500" y2="200" stroke="#333" stroke-width="2"/>
+                            <line x1="100" y1="0" x2="100" y2="400" stroke="#333" stroke-width="2"/>
+                            
+                            <!-- Axis labels -->
+                            <text x="490" y="195" font-size="14" font-weight="bold">x</text>
+                            <text x="105" y="15" font-size="14" font-weight="bold">y</text>
+                            
+                            <!-- Original quadrilateral ABCD (blue) - 2x2 square -->
+                            <polygon points="220,120 300,120 300,40 220,40" fill="rgba(2, 128, 144, 0.3)" stroke="#028090" stroke-width="3"/>
+                            <circle cx="220" cy="40" r="5" fill="#028090"/>
+                            <text x="215" y="30" font-size="12" font-weight="bold" fill="#028090">A(3,4)</text>
+                            <circle cx="300" cy="40" r="5" fill="#028090"/>
+                            <text x="305" y="35" font-size="12" font-weight="bold" fill="#028090">B(5,4)</text>
+                            <circle cx="300" cy="120" r="5" fill="#028090"/>
+                            <text x="305" y="130" font-size="12" font-weight="bold" fill="#028090">C(5,2)</text>
+                            <circle cx="220" cy="120" r="5" fill="#028090"/>
+                            <text x="215" y="135" font-size="12" font-weight="bold" fill="#028090">D(3,2)</text>
+                            
+                            <!-- Transformed quadrilateral A'B'C'D' (orange) - 2x2 square -->
+                            <polygon points="420,240 500,240 500,160 420,160" fill="rgba(244, 162, 97, 0.3)" stroke="#F4A261" stroke-width="3"/>
+                            <circle cx="420" cy="160" r="5" fill="#F4A261"/>
+                            <text x="415" y="150" font-size="12" font-weight="bold" fill="#F4A261">A'(8,1)</text>
+                            <circle cx="500" cy="160" r="5" fill="#F4A261"/>
+                            <text x="465" y="150" font-size="12" font-weight="bold" fill="#F4A261">B'(10,1)</text>
+                            <circle cx="500" cy="240" r="5" fill="#F4A261"/>
+                            <text x="460" y="255" font-size="12" font-weight="bold" fill="#F4A261">C'(10,-1)</text>
+                            <circle cx="420" cy="240" r="5" fill="#F4A261"/>
+                            <text x="415" y="255" font-size="12" font-weight="bold" fill="#F4A261">D'(8,-1)</text>
+                            
+                            <!-- Grid numbers -->
+                            <text x="220" y="215" font-size="10" fill="#666">3</text>
+                            <text x="300" y="215" font-size="10" fill="#666">5</text>
+                            <text x="420" y="215" font-size="10" fill="#666">8</text>
+                            <text x="500" y="215" font-size="10" fill="#666">10</text>
+                            <text x="80" y="245" font-size="10" fill="#666">-1</text>
+                            <text x="80" y="165" font-size="10" fill="#666">1</text>
+                            <text x="80" y="125" font-size="10" fill="#666">2</text>
+                            <text x="80" y="45" font-size="10" fill="#666">4</text>
+                        </svg>
+                    </div>
+                    
+                    <div class="problem-display">
+                        <p>Quadrilateral ABCD is transformed to A'B'C'D'.</p>
+                        <p style="margin-top: 8px;"><strong>Which rule describes the transformation?</strong></p>
+                    </div>
+                    <div class="desmos-reminder">
+                        💡 <strong>Step 1:</strong> Create table (+) with x₁ and y₁:<br>
+                        x₁: 3, 3, 5, 5 &nbsp;|&nbsp; y₁: 4, 2, 2, 4<br>
+                        <strong>Step 2:</strong> Line 2: polygon(x₁,y₁)<br>
+                        <strong>Step 3:</strong> Copy to Line 3, test answer choices:<br>
+                        polygon(x₁ + 5, y₁ - 3) ← Test each rule!<br>
+                        Compare to graph above
+                    </div>
+                    <div class="answer-grid">
+                        <button class="answer-btn" onclick="checkAnswer(4, 'A')" disabled>A) (x, y) → (x - 5, y + 3)</button>
+                        <button class="answer-btn" onclick="checkAnswer(4, 'B')" disabled>B) (x, y) → (x + 5, y - 3)</button>
+                        <button class="answer-btn" onclick="checkAnswer(4, 'C')" disabled>C) (x, y) → (x + 5, y + 3)</button>
+                        <button class="answer-btn" onclick="checkAnswer(4, 'D')" disabled>D) (x, y) → (x - 5, y - 3)</button>
+                    </div>
+                </div>
+
+                <!-- PROBLEM 5: ORDERING REAL NUMBERS -->
+                <div class="card locked" id="card5">
+                    <div class="teks-badge">LEVEL 9 • TEKS 8.2D</div>
+                    <h3>PROBLEM 5: Ordering Real Numbers</h3>
+                    <div class="problem-display">
+                        <p><strong>Which list shows the values ordered from LEAST to GREATEST?</strong></p>
+                        <p style="margin-top: 8px; font-family: 'Courier New', monospace; font-size: 16px;">
+                            4.5  &nbsp;&nbsp;  √22  &nbsp;&nbsp;  465%  &nbsp;&nbsp;  14/3
+                        </p>
+                    </div>
+                    <div class="desmos-reminder">
+                        💡 Plot as points: (4.5,0), (sqrt(22),0), (465/100,0), (14/3,0)
+                    </div>
+                    <div class="answer-grid">
+                        <button class="answer-btn" onclick="checkAnswer(5, 'A')" disabled>A) 4.5, √22, 14/3, 465%</button>
+                        <button class="answer-btn" onclick="checkAnswer(5, 'B')" disabled>B) 465%, 4.5, 14/3, √22</button>
+                        <button class="answer-btn" onclick="checkAnswer(5, 'C')" disabled>C) 4.5, 465%, 14/3, √22</button>
+                        <button class="answer-btn" onclick="checkAnswer(5, 'D')" disabled>D) √22, 14/3, 465%, 4.5</button>
+                    </div>
+                </div>
+
+                <!-- PROBLEM 6: SYSTEMS OF EQUATIONS -->
+                <div class="card locked" id="card6">
+                    <div class="teks-badge">LEVEL 10 • TEKS 8.9A</div>
+                    <h3>PROBLEM 6: Systems of Equations</h3>
+                    <div class="problem-display">
+                        <p><strong>Two lines are represented by these points:</strong></p>
+                        <p style="margin-top: 8px; color: #FFB3B3;"><strong>Line 1:</strong> (0, 8) and (4, 0)</p>
+                        <p style="color: #FFB3B3;"><strong>Line 2:</strong> (0, 2) and (6, 8)</p>
+                        <p style="margin-top: 8px;">Which ordered pair is the solution of the system of equations?</p>
+                    </div>
+                    <div class="desmos-reminder">
+                        💡 Create 2 tables, use regression button, find intersection
+                    </div>
+                    <div class="answer-grid">
+                        <button class="answer-btn" onclick="checkAnswer(6, 'A')" disabled>A) (2, 4)</button>
+                        <button class="answer-btn" onclick="checkAnswer(6, 'B')" disabled>B) (3, 5)</button>
+                        <button class="answer-btn" onclick="checkAnswer(6, 'C')" disabled>C) (4, 6)</button>
+                        <button class="answer-btn" onclick="checkAnswer(6, 'D')" disabled>D) (2, 6)</button>
+                    </div>
+                </div>
+
+                <!-- FINAL FEEDBACK -->
+                <div class="final-feedback" id="finalFeedback">
+                    <h2>🏆 RAID BOSS DEFEATED! 🏆</h2>
+                    <p style="font-size: 16px; margin-top: 10px;">You've mastered all Desmos strategies from Zones 2 & 3!</p>
+                    <p style="font-size: 14px; margin-top: 10px; color: #FFB3B3;">✓ Pythagorean Theorem<br>✓ Volume & Surface Area<br>✓ Dilations<br>✓ Transformations<br>✓ Ordering Real Numbers<br>✓ Systems of Equations</p>
+                    <p style="font-size: 18px; margin-top: 15px; color: #FF6B6B; font-weight: bold;">🐝 ZONES 2+3 COMPLETE! 🐝</p>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <iframe id="calculator" src="https://www.desmos.com/testing/texas/graphing" style="width: 100%; height: 100%; border: none;"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let completed = 0;
+        const correctAnswers = {
+            1: 'C',  // 15 cm
+            2: 'A',  // 628 in³
+            3: 'D',  // 3
+            4: 'B',  // (x+5, y-3)
+            5: 'C',  // 4.5, 465%, 14/3, √22
+            6: 'A'   // (2, 4)
+        };
+
+        // Prevent copy/paste and right-click
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+
+        document.addEventListener('copy', function(e) {
+            e.preventDefault();
+            return false;
+        });
+
+        document.addEventListener('cut', function(e) {
+            e.preventDefault();
+            return false;
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'x' || e.key === 'v')) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        function checkAnswer(problemNum, choice) {
+            const card = document.getElementById('card' + problemNum);
+            const buttons = card.querySelectorAll('.answer-btn');
+            
+            buttons.forEach(btn => btn.disabled = true);
+            
+            if (choice === correctAnswers[problemNum]) {
+                event.target.classList.add('correct');
+                completed++;
+                
+                // Update progress bar
+                const progress = (completed / 6) * 100;
+                document.getElementById('progressFill').style.width = progress + '%';
+                document.getElementById('progressText').textContent = completed + '/6 Complete';
+                
+                setTimeout(() => {
+                    // Mark card as completed
+                    card.classList.add('completed');
+                    
+                    // Unlock next card
+                    if (problemNum < 6) {
+                        const nextCard = document.getElementById('card' + (problemNum + 1));
+                        nextCard.classList.remove('locked');
+                        const nextButtons = nextCard.querySelectorAll('.answer-btn');
+                        nextButtons.forEach(btn => btn.disabled = false);
+                        
+                        // Scroll to next problem
+                        nextCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    } else {
+                        // Show final feedback
+                        document.getElementById('finalFeedback').classList.add('show');
+                        document.getElementById('finalFeedback').scrollIntoView({ behavior: 'smooth' });
+                    }
+                }, 500);
+            } else {
+                event.target.classList.add('incorrect');
+                setTimeout(() => {
+                    buttons.forEach(btn => btn.disabled = false);
+                    event.target.classList.remove('incorrect');
+                }, 800);
+            }
+        }
+    </script>
+</body>
+</html>
