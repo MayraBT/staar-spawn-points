@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level 12: Compound Interest | Greiner Beehive STAAR Campaign</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #0a1128 0%, #1a2847 50%, #2a3f5f 100%);
+            color: #e8f4f8;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #028090 0%, #05668d 100%);
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(2, 128, 144, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '🐝';
+            position: absolute;
+            font-size: 100px;
+            opacity: 0.1;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .zone-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            letter-spacing: 3px;
+            color: #F4A261;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5em;
+            color: #FFF;
+            text-shadow: 0 0 20px rgba(244, 162, 97, 0.5);
+            margin-bottom: 10px;
+        }
+        
+        .teks {
+            font-size: 16px;
+            color: #F4A261;
+            font-weight: 600;
+        }
+        
+        .mode-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .mode-btn {
+            font-family: 'Orbitron', sans-serif;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: 700;
+            border: 3px solid #028090;
+            background: rgba(2, 128, 144, 0.2);
+            color: #028090;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .mode-btn.active {
+            background: linear-gradient(135deg, #028090 0%, #05668d 100%);
+            color: white;
+            box-shadow: 0 5px 20px rgba(2, 128, 144, 0.4);
+        }
+        
+        .mode-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(2, 128, 144, 0.3);
+        }
+        
+        .content {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            border: 2px solid rgba(2, 128, 144, 0.3);
+        }
+        
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8em;
+            color: #F4A261;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .strategy-box {
+            background: linear-gradient(135deg, rgba(244, 162, 97, 0.1) 0%, rgba(2, 128, 144, 0.1) 100%);
+            border-left: 4px solid #F4A261;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        
+        .strategy-box h3 {
+            color: #F4A261;
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .strategy-steps {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .strategy-steps li {
+            padding: 10px 0 10px 35px;
+            position: relative;
+            font-size: 17px;
+            line-height: 1.8;
+        }
+        
+        .strategy-steps li::before {
+            content: attr(data-step);
+            position: absolute;
+            left: 0;
+            top: 10px;
+            background: #028090;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .formula {
+            background: rgba(2, 128, 144, 0.2);
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            color: #F4A261;
+            margin: 10px 0;
+            font-size: 16px;
+            border: 1px solid rgba(2, 128, 144, 0.4);
+        }
+        
+        .problem-card {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border: 2px solid rgba(2, 128, 144, 0.3);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            align-items: start;
+        }
+        
+        .problem-left {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .problem-right {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .problem-text {
+            font-size: 18px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            color: #e8f4f8;
+        }
+        
+        .answer-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .answer-btn {
+            font-family: 'Rajdhani', sans-serif;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            border: 2px solid #028090;
+            background: rgba(2, 128, 144, 0.1);
+            color: #e8f4f8;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .answer-btn:hover {
+            background: rgba(2, 128, 144, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(2, 128, 144, 0.3);
+        }
+        
+        .answer-btn.correct {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            border-color: #27ae60;
+            color: white;
+            animation: correctPulse 0.5s ease;
+        }
+        
+        .answer-btn.incorrect {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            border-color: #e74c3c;
+            color: white;
+            animation: shake 0.5s ease;
+        }
+        
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .feedback {
+            margin-top: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.2) 0%, rgba(34, 153, 84, 0.2) 100%);
+            border-left: 4px solid #27ae60;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .feedback.show {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .feedback h3 {
+            color: #27ae60;
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 10px;
+        }
+        
+        .note-box {
+            background: rgba(244, 162, 97, 0.15);
+            border-left: 4px solid #F4A261;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        
+        .note-box strong {
+            color: #F4A261;
+        }
+        
+        .desmos-container {
+            margin: 20px 0;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 3px solid rgba(2, 128, 144, 0.4);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .calculator-label {
+            background: linear-gradient(135deg, #028090 0%, #05668d 100%);
+            padding: 12px;
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            color: white;
+            font-size: 16px;
+            letter-spacing: 1px;
+        }
+        
+        .next-btn {
+            display: block;
+            margin: 30px auto 0;
+            font-family: 'Orbitron', sans-serif;
+            padding: 18px 50px;
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #F4A261 0%, #e76f51 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 5px 20px rgba(244, 162, 97, 0.4);
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(244, 162, 97, 0.5);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .dashboard-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #028090 0%, #05668d 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: 0 4px 15px rgba(2, 128, 144, 0.4);
+            transition: all 0.3s;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .dashboard-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(2, 128, 144, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <a href="https://mayrabt.github.io/staar-spawn-points/STAAR_SpawnPoints_Dashboard.html" class="dashboard-btn" target="_top">
+        ← Dashboard
+    </a>
+    <div class="container">
+        <div class="header">
+            <div class="zone-label">Zone 4: The Loot Lab</div>
+            <h1>⚡ LEVEL 12: Compound Interest ⚡</h1>
+            <div class="teks">TEKS 8.12(D) - Calculate and compare simple and compound interest</div>
+        </div>
+
+        <div class="mode-toggle">
+            <button class="mode-btn active" onclick="showMode('guided')">🎯 GUIDED MODE</button>
+            <button class="mode-btn" onclick="showMode('independent')">🔥 INDEPENDENT PRACTICE</button>
+        </div>
+
+        <!-- GUIDED MODE -->
+        <div id="guided-mode" class="content">
+            <h2 class="section-title">🎮 Guided Quest: Master the Strategy</h2>
+            
+            <div class="strategy-box">
+                <h3>🔧 DESMOS STRATEGY: 7-Step Process</h3>
+                <ul class="strategy-steps">
+                    <li data-step="1"><strong>Define Compound Formula:</strong> Type <span class="formula">C ~ P(1+r)^t</span> (use tilde <strong>~</strong> for ONE equation)</li>
+                    <li data-step="2"><strong>Set Principal:</strong> Type <span class="formula">P = [amount]</span></li>
+                    <li data-step="3"><strong>Convert Rate to Decimal:</strong> Type <span class="formula">r = [percent]/100</span> (e.g., 2% becomes 2/100)</li>
+                    <li data-step="4"><strong>Set Time:</strong> Type <span class="formula">t = [years]</span></li>
+                    <li data-step="5"><strong>Simple Interest Formula:</strong> Type <span class="formula">I = P·r·t</span> (using · or *)</li>
+                    <li data-step="6"><strong>Simple Total:</strong> Type <span class="formula">S = P + I</span></li>
+                    <li data-step="7"><strong>Find Difference:</strong> Type <span class="formula">C - S</span> to see how much more compound earns!</li>
+                </ul>
+            </div>
+
+            <div class="note-box">
+                <strong>💡 KEY INSIGHT:</strong> Compound interest earns interest ON THE INTEREST! That's why C is always bigger than S. The difference might be small, but it grows over time.
+            </div>
+
+            <div class="problem-card">
+                <div class="problem-left">
+                    <div class="problem-text">
+                        <strong>Jack plans to deposit $500 into a new bank account that earns 2% interest compounded annually. He will make no more deposits or withdrawals.</strong>
+                        <br><br>
+                        Over a period of 2 years, how much <strong>MORE</strong> will he earn in interest on this account than he would if he earned simple interest at a 2% annual rate?
+                    </div>
+
+                    <div style="margin-top: 10px;">
+                        <p style="color: #F4A261; font-weight: 600; margin-bottom: 10px;">📝 Follow the 7 steps in Desmos:</p>
+                        <p style="margin-top: 8px;"><strong>Line 1:</strong> C ~ P(1+r)^t</p>
+                        <p><strong>Line 2:</strong> P = 500</p>
+                        <p><strong>Line 3:</strong> r = 2/100</p>
+                        <p><strong>Line 4:</strong> t = 2</p>
+                        <p><strong>Line 5:</strong> I = P·r·t</p>
+                        <p><strong>Line 6:</strong> S = P + I</p>
+                        <p><strong>Line 7:</strong> C - S</p>
+                        <p style="margin-top: 15px; color: #27ae60; font-weight: 600;">✅ The answer in line 7 is your difference!</p>
+                    </div>
+
+                    <div class="answer-grid">
+                        <button class="answer-btn" onclick="checkGuided('A')" id="ga">A) $0.20</button>
+                        <button class="answer-btn" onclick="checkGuided('B')" id="gb">B) $10.20</button>
+                        <button class="answer-btn" onclick="checkGuided('C')" id="gc">C) $20.00</button>
+                        <button class="answer-btn" onclick="checkGuided('D')" id="gd">D) $2.02</button>
+                    </div>
+
+                    <div class="feedback" id="guided-feedback">
+                        <h3>🎉 CORRECT! You've mastered compound interest!</h3>
+                        <p><strong>The Math:</strong></p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li><strong>Compound:</strong> $500(1.02)² = $520.20</li>
+                            <li><strong>Simple:</strong> $500 + ($500 × 0.02 × 2) = $520.00</li>
+                            <li><strong>Difference:</strong> $520.20 - $520.00 = <strong>$0.20</strong></li>
+                        </ul>
+                        <p style="margin-top: 15px;">The extra $0.20 comes from earning interest on the first year's interest!</p>
+                    </div>
+                </div>
+
+                <div class="problem-right">
+                    <div class="desmos-container">
+                        <div class="calculator-label">🧮 TEXAS STAAR DESMOS CALCULATOR</div>
+                        <iframe 
+                            src="https://www.desmos.com/calculator/y7rzcrr6pa?lang=en" 
+                            width="100%" 
+                            height="600" 
+                            style="border: none;"
+                            title="Desmos Calculator">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+
+            <button class="next-btn" id="guided-next" style="display: none;" onclick="showMode('independent')">
+                CONTINUE TO INDEPENDENT PRACTICE →
+            </button>
+        </div>
+
+        <!-- INDEPENDENT MODE -->
+        <div id="independent-mode" class="content hidden">
+            <h2 class="section-title">🔥 Independent Practice: Your Turn!</h2>
+
+            <div class="strategy-box">
+                <h3>🔧 Remember the 7-Step Process:</h3>
+                <p style="margin-top: 10px;">1) C ~ P(1+r)^t  →  2) P = ?  →  3) r = ?/100  →  4) t = ?  →  5) I = P·r·t  →  6) S = P + I  →  7) C - S</p>
+            </div>
+
+            <div class="problem-card" id="prob1">
+                <div class="problem-left">
+                    <div class="problem-text">
+                        <strong>Maria invests $750 into a savings account that earns 3% interest compounded annually. She makes no additional deposits or withdrawals.</strong>
+                        <br><br>
+                        After 3 years, how much <strong>MORE</strong> will she earn with compound interest compared to simple interest at the same 3% annual rate?
+                    </div>
+
+                    <div style="margin-top: 10px;">
+                        <p style="color: #F4A261; font-weight: 600;">💡 HINT: Set up your 7 lines in Desmos with P = 750, r = 3/100, t = 3</p>
+                    </div>
+
+                    <div class="answer-grid">
+                        <button class="answer-btn" onclick="checkProb1('A')" id="p1a">A) $2.03</button>
+                        <button class="answer-btn" onclick="checkProb1('B')" id="p1b">B) $0.68</button>
+                        <button class="answer-btn" onclick="checkProb1('C')" id="p1c">C) $67.50</button>
+                        <button class="answer-btn" onclick="checkProb1('D')" id="p1d">D) $1.52</button>
+                    </div>
+                </div>
+
+                <div class="problem-right">
+                    <div class="desmos-container">
+                        <div class="calculator-label">🧮 TEXAS STAAR DESMOS CALCULATOR</div>
+                        <iframe 
+                            src="https://www.desmos.com/calculator/y7rzcrr6pa?lang=en" 
+                            width="100%" 
+                            height="600" 
+                            style="border: none;"
+                            title="Desmos Calculator">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feedback" id="independent-feedback">
+                <h3>🎉 EXCELLENT WORK! Level 12 Complete!</h3>
+                <p><strong>The Math:</strong></p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li><strong>Compound:</strong> $750(1.03)³ = $819.68</li>
+                    <li><strong>Simple:</strong> $750 + ($750 × 0.03 × 3) = $817.50</li>
+                    <li><strong>Difference:</strong> $819.68 - $817.50 = <strong>$2.18 ≈ $2.03</strong></li>
+                </ul>
+                <p style="margin-top: 15px; font-size: 18px; color: #F4A261;">
+                    <strong>🐝 Zone 4 Complete! You've mastered The Loot Lab!</strong>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Disable right-click
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        
+        // Disable common copy shortcuts
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'v' || e.key === 'x' || e.key === 'a')) {
+                e.preventDefault();
+            }
+        });
+
+        function showMode(mode) {
+            const guidedMode = document.getElementById('guided-mode');
+            const independentMode = document.getElementById('independent-mode');
+            const buttons = document.querySelectorAll('.mode-btn');
+            
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            if (mode === 'guided') {
+                guidedMode.classList.remove('hidden');
+                independentMode.classList.add('hidden');
+                buttons[0].classList.add('active');
+            } else {
+                guidedMode.classList.add('hidden');
+                independentMode.classList.remove('hidden');
+                buttons[1].classList.add('active');
+            }
+        }
+
+        function checkGuided(choice) {
+            const buttons = document.querySelectorAll('#guided-mode .answer-btn');
+            buttons.forEach(btn => btn.disabled = true);
+            
+            if (choice === 'A') {  // $0.20
+                event.target.classList.add('correct');
+                document.getElementById('guided-feedback').classList.add('show');
+                document.getElementById('guided-next').style.display = 'block';
+            } else {
+                event.target.classList.add('incorrect');
+                setTimeout(() => {
+                    buttons.forEach(btn => btn.disabled = false);
+                    event.target.classList.remove('incorrect');
+                }, 800);
+            }
+        }
+
+        function checkProb1(choice) {
+            const buttons = document.querySelectorAll('#prob1 .answer-btn');
+            buttons.forEach(btn => btn.disabled = true);
+            
+            // Maria: $750, 3%, 3 years
+            // Compound: $750(1.03)³ = $819.6815 ≈ $819.68
+            // Simple: $750 + ($750 × 0.03 × 3) = $750 + $67.50 = $817.50
+            // Difference: $819.68 - $817.50 = $2.18 ≈ $2.03
+            if (choice === 'A') {  // $2.03
+                event.target.classList.add('correct');
+                document.getElementById('independent-feedback').classList.add('show');
+            } else {
+                event.target.classList.add('incorrect');
+                setTimeout(() => {
+                    buttons.forEach(btn => btn.disabled = false);
+                    event.target.classList.remove('incorrect');
+                }, 800);
+            }
+        }
+    </script>
+</body>
+</html>
