@@ -210,9 +210,37 @@
             font-size: 12px;
             color: #FFB3B3;
         }
+        
+        .dashboard-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #028090 0%, #05668d 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: 0 4px 15px rgba(2, 128, 144, 0.4);
+            transition: all 0.3s;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .dashboard-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(2, 128, 144, 0.5);
+        }
     </style>
 </head>
 <body>
+    <a href="https://mayrabt.github.io/staar-spawn-points/STAAR_SpawnPoints_Dashboard.html" class="dashboard-btn">
+        ← Dashboard
+    </a>
     <div class="container">
         <div class="header">
             <h1>⚔️ ZONES 2+3 RAID BOSS ⚔️<br>DESMOS MASTER CHALLENGE</h1>
